@@ -1,26 +1,89 @@
 .admin-shell {
-  width: min(1080px, 100%);
+  width: min(1120px, 100%);
 }
 
-.admin-grid {
+.admin-head {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  margin: 18px 0 8px;
+  gap: 14px;
+  margin-bottom: 18px;
+  text-align: start;
 }
 
-.admin-card {
+.admin-head h2 {
+  margin-bottom: 4px;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--pop-face);
+  color: var(--button-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-tabs button.is-on {
+  background: #1a1612;
+  color: #f6efe4;
+  border-color: #1a1612;
+}
+
+.admin-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.admin-search {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fffaf4;
+  color: var(--panel-text);
+  font: inherit;
+}
+
+.admin-count {
+  margin: 0 0 12px;
+  color: var(--muted-text);
+  font-size: 0.9rem;
+}
+
+.admin-card,
+.admin-row {
   display: grid;
   gap: 10px;
-  padding: 18px 16px;
+  padding: 16px;
   border-radius: 18px;
-  background: var(--surface);
+  background: #fffaf4;
   border: 1px solid var(--border);
   text-align: start;
 }
 
-.admin-card h3 {
-  font-size: 1.2rem;
+.admin-add,
+.admin-site {
+  margin-bottom: 14px;
+}
+
+.admin-add-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 10px;
 }
 
 .admin-prices {
@@ -29,16 +92,20 @@
   gap: 8px;
 }
 
-.admin-card label {
+.admin-card label,
+.admin-row-edit label {
   display: grid;
   gap: 6px;
   color: var(--muted-text);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .admin-card input,
 .admin-card textarea,
-.admin-card select {
+.admin-card select,
+.admin-row-edit input,
+.admin-row-edit textarea,
+.admin-row-edit select {
   width: 100%;
   padding: 10px 12px;
   border-radius: 12px;
@@ -49,37 +116,100 @@
   resize: vertical;
 }
 
-.admin-card .primary-btn {
-  width: 100%;
-  min-width: 0;
-  margin-top: 4px;
-}
-
-.admin-site {
-  margin: 8px 0 20px;
-}
-
-.admin-site-actions {
+.admin-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
-.admin-site .back-home {
-  width: 100%;
-  margin-top: 0;
+.admin-row-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto minmax(220px, 1.1fr);
+  gap: 10px;
+  align-items: center;
 }
 
-.admin-card.is-unavailable {
-  opacity: 0.55;
+.admin-row-name {
+  border: 0;
+  background: transparent;
+  text-align: start;
+  cursor: pointer;
+  color: inherit;
 }
 
-.admin-card.is-removed {
-  opacity: 0.4;
+.admin-row-name strong {
+  display: block;
+  font-size: 1.05rem;
 }
 
-.admin-card .sold-out-tag {
-  margin: 0;
+.admin-row-name span {
+  color: var(--muted-text);
+  font-size: 0.88rem;
+}
+
+.admin-row-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-row-flags em {
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(107, 70, 48, 0.14);
+  color: #6b4630;
+}
+
+.admin-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: end;
+}
+
+.admin-btn {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--pop-face);
+  color: var(--button-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-btn-add {
+  background: #1a1612;
+  color: #f6efe4;
+  border-color: #1a1612;
+}
+
+.admin-btn-danger {
+  background: #f4e4e0;
+  color: #8a3a3a;
+  border-color: #e0c4bc;
+}
+
+.admin-btn-ghost {
+  background: transparent;
+}
+
+.admin-row-edit {
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.admin-row.is-unavailable {
+  opacity: 0.72;
+}
+
+.admin-row.is-removed {
+  opacity: 0.5;
 }
 
 .place-map {
@@ -104,4 +234,20 @@
 
 .overlay-shell .place-map iframe {
   height: 220px;
+}
+
+@media (max-width: 820px) {
+  .admin-toolbar,
+  .admin-add-grid,
+  .admin-row-main {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-row-actions {
+    justify-content: stretch;
+  }
+
+  .admin-row-actions .admin-btn {
+    flex: 1;
+  }
 }

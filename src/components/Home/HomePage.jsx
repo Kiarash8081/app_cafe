@@ -4,7 +4,6 @@ import { UI } from '../../data/i18n';
 import { openOverlayPage } from '../../utils/pageOverlay';
 import { pickSite } from '../../utils/siteContent';
 import { PlaceMap } from '../Common/PlaceMap';
-import { MenuStage } from './MenuStage';
 
 export function HomePage() {
   const { isLoggedIn, language, siteContent } = useApp();
@@ -107,8 +106,6 @@ export function HomePage() {
           ))}
         </div>
       </section>
-
-      <MenuStage />
 
       <section className="faq-block" aria-labelledby="faq-heading">
         <h2 id="faq-heading">{text.faqHeading}</h2>
