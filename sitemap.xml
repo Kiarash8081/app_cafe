@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://kiarash8081.github.io/app_cafe/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://kiarash8081.github.io/app_cafe/?lang=fa" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kiarash8081.github.io/app_cafe/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://kiarash8081.github.io/app_cafe/?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://kiarash8081.github.io/app_cafe/?lang=zh" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://kiarash8081.github.io/app_cafe/?lang=es" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kiarash8081.github.io/app_cafe/" />
+  </url>
+</urlset>

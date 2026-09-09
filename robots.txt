@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kiarash8081.github.io/app_cafe/sitemap.xml
