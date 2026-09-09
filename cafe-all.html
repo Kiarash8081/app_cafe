@@ -1,0 +1,5681 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>کافه نوا — کل کدها</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+      background: #1a1612;
+      color: #f6efe4;
+      line-height: 1.65;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      padding: 16px 20px;
+      background: #2a1d16;
+      border-bottom: 1px solid #6b4630;
+      z-index: 2;
+    }
+    h1 { margin: 0; font-size: 1.3rem; }
+    p { margin: 6px 0 0; color: #c4a07a; }
+    main { padding: 12px 16px 40px; }
+    .file {
+      margin: 18px 0;
+      padding: 14px;
+      border: 1px solid #6b4630;
+      border-radius: 14px;
+      background: #241c16;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: #e8c56b;
+      direction: ltr;
+      text-align: left;
+    }
+    pre {
+      margin: 0;
+      overflow: auto;
+      direction: ltr;
+      text-align: left;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font: 13px/1.55 Consolas, "Courier New", monospace;
+      color: #f3e6d4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>کل کدهای پروژه کافه نوا</h1>
+    <p>56 فایل، پشت‌سرهم در همین صفحه</p>
+  </header>
+  <main>
+<section class="file">
+<h2>.github/workflows/deploy.yml</h2>
+<pre><code>name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: SPA fallback
+        run: cp dist/index.html dist/404.html
+      - name: Publish gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true
+</code></pre>
+</section>
+<section class="file">
+<h2>.gitignore</h2>
+<pre><code>node_modules
+dist
+.DS_Store
+.env
+.env.*
+</code></pre>
+</section>
+<section class="file">
+<h2>index.html</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fa" dir="rtl"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" /&gt;
+    &lt;title&gt;کافه نوا&lt;/title&gt;
+    &lt;meta name="description" content="کافه نوا: اسپرسو، لاته، کلد برو و سفارش آنلاین. دان تازه و دم‌آوری دقیق." /&gt;
+    &lt;meta name="robots" content="index,follow,max-image-preview:large" /&gt;
+    &lt;meta name="author" content="کافه نوا" /&gt;
+    &lt;meta name="theme-color" content="#6b4630" /&gt;
+    &lt;meta name="geo.region" content="IR" /&gt;
+    &lt;link rel="canonical" href="https://kiarash8081.github.io/app_cafe/" /&gt;
+    &lt;link rel="icon" href="./favicon.svg" type="image/svg+xml" /&gt;
+    &lt;link rel="apple-touch-icon" href="./hero-coffee.png" /&gt;
+    &lt;link rel="manifest" href="./site.webmanifest" /&gt;
+    &lt;meta property="og:type" content="website" /&gt;
+    &lt;meta property="og:site_name" content="Nova Café" /&gt;
+    &lt;meta property="og:title" content="کافه نوا" /&gt;
+    &lt;meta property="og:description" content="اسپرسو، لاته، کلد برو و سفارش آنلاین در کافه نوا." /&gt;
+    &lt;meta property="og:image" content="./hero-coffee.png" /&gt;
+    &lt;meta property="og:locale" content="fa_IR" /&gt;
+    &lt;meta name="twitter:card" content="summary_large_image" /&gt;
+    &lt;meta name="twitter:title" content="کافه نوا" /&gt;
+    &lt;meta name="twitter:description" content="اسپرسو، لاته، کلد برو و سفارش آنلاین در کافه نوا." /&gt;
+    &lt;meta name="twitter:image" content="./hero-coffee.png" /&gt;
+    &lt;link rel="preconnect" href="https://fonts.googleapis.com" /&gt;
+    &lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /&gt;
+    &lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&amp;family=Playfair+Display:wght@600;700&amp;display=swap" /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="/src/main.jsx"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</section>
+<section class="file">
+<h2>package.json</h2>
+<pre><code>{
+  "name": "my-cafe-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "vite": "^8.2.0"
+  }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>public/favicon.svg</h2>
+<pre><code>&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"&gt;
+  &lt;rect width="64" height="64" rx="14" fill="#6b4630"/&gt;
+  &lt;ellipse cx="28" cy="38" rx="14" ry="10" fill="#f6efe4"/&gt;
+  &lt;path d="M42 32c6 0 10 4 10 9s-4 9-10 9" fill="none" stroke="#f6efe4" stroke-width="4"/&gt;
+  &lt;path d="M22 18c2 4 1 7 0 10M28 16c2 5 1 8 0 12M34 18c2 4 1 7 0 10" fill="none" stroke="#f3d2b0" stroke-width="2" stroke-linecap="round"/&gt;
+&lt;/svg&gt;
+</code></pre>
+</section>
+<section class="file">
+<h2>public/robots.txt</h2>
+<pre><code>User-agent: *
+Allow: /
+
+Sitemap: https://kiarash8081.github.io/app_cafe/sitemap.xml
+</code></pre>
+</section>
+<section class="file">
+<h2>public/sitemap.xml</h2>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://kiarash8081.github.io/app_cafe/&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+    &lt;xhtml:link rel="alternate" hreflang="fa" href="https://kiarash8081.github.io/app_cafe/?lang=fa" /&gt;
+    &lt;xhtml:link rel="alternate" hreflang="en" href="https://kiarash8081.github.io/app_cafe/?lang=en" /&gt;
+    &lt;xhtml:link rel="alternate" hreflang="ar" href="https://kiarash8081.github.io/app_cafe/?lang=ar" /&gt;
+    &lt;xhtml:link rel="alternate" hreflang="zh" href="https://kiarash8081.github.io/app_cafe/?lang=zh" /&gt;
+    &lt;xhtml:link rel="alternate" hreflang="es" href="https://kiarash8081.github.io/app_cafe/?lang=es" /&gt;
+    &lt;xhtml:link rel="alternate" hreflang="x-default" href="https://kiarash8081.github.io/app_cafe/" /&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;
+</code></pre>
+</section>
+<section class="file">
+<h2>README.md</h2>
+<pre><code># کافه نوا
+
+سایت زنده: https://kiarash8081.github.io/app_cafe/
+
+اگر صفحه باز نشد، در GitHub بروید به Settings → Pages و Source را روی شاخه `gh-pages` بگذارید.
+
+</code></pre>
+</section>
+<section class="file">
+<h2>src/App.jsx</h2>
+<pre><code>import React from 'react';
+import { AppProvider, useApp } from './context/AppContext';
+import { Background } from './components/Layout/Background';
+import { Header } from './components/Layout/Header';
+import { LogoIntro } from './components/Layout/LogoIntro';
+import { UserPanel } from './components/UserPanel/UserPanel';
+import { HomePage } from './components/Home/HomePage';
+import { SiteFooter } from './components/Layout/SiteFooter';
+import { LoginPage } from './components/Auth/LoginPage';
+import { AdminLoginPage } from './components/Auth/AdminLoginPage';
+import { SignupPage } from './components/Auth/SignupPage';
+import { MenuPage } from './components/Menu/MenuPage';
+import { OrderPage } from './components/Order/OrderPage';
+import { PaymentPage } from './components/Payment/PaymentPage';
+import { MyOrdersPage } from './components/User/MyOrdersPage';
+import { ContactPage } from './components/Contact/ContactPage';
+import { TermsPage } from './components/Legal/TermsPage';
+import { AdminPage } from './components/Admin/AdminPage';
+import { Seo } from './components/Seo/Seo';
+import './styles/App.css';
+
+function AppShell({ siteReady, onIntroDone }) {
+  const { isLoading } = useApp();
+
+  return (
+    &lt;&gt;
+      {!siteReady &amp;&amp; &lt;LogoIntro onComplete={onIntroDone} dataReady={!isLoading} /&gt;}
+      &lt;Seo /&gt;
+      &lt;Background /&gt;
+      &lt;UserPanel /&gt;
+      &lt;div className={`site ${siteReady ? 'site-visible' : ''}`} id="mainSite"&gt;
+        &lt;div id="site-content"&gt;
+          &lt;Header /&gt;
+          &lt;HomePage /&gt;
+        &lt;/div&gt;
+        &lt;SiteFooter /&gt;
+      &lt;/div&gt;
+      &lt;LoginPage /&gt;
+      &lt;AdminLoginPage /&gt;
+      &lt;SignupPage /&gt;
+      &lt;MenuPage /&gt;
+      &lt;OrderPage /&gt;
+      &lt;PaymentPage /&gt;
+      &lt;MyOrdersPage /&gt;
+      &lt;ContactPage /&gt;
+      &lt;TermsPage /&gt;
+      &lt;AdminPage /&gt;
+    &lt;/&gt;
+  );
+}
+
+function App() {
+  const [siteReady, setSiteReady] = React.useState(false);
+  const handleIntroDone = React.useCallback(() =&gt; setSiteReady(true), []);
+
+  React.useEffect(() =&gt; {
+    document.body.classList.toggle('intro-active', !siteReady);
+    return () =&gt; document.body.classList.remove('intro-active');
+  }, [siteReady]);
+
+  return (
+    &lt;AppProvider&gt;
+      &lt;AppShell siteReady={siteReady} onIntroDone={handleIntroDone} /&gt;
+    &lt;/AppProvider&gt;
+  );
+}
+
+export default App;
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Admin/AdminPage.css</h2>
+<pre><code>.admin-shell {
+  width: min(1120px, 100%);
+}
+
+.admin-head {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 18px;
+  text-align: start;
+}
+
+.admin-head h2 {
+  margin-bottom: 4px;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--pop-face);
+  color: var(--button-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-tabs button.is-on {
+  background: #1a1612;
+  color: #f6efe4;
+  border-color: #1a1612;
+}
+
+.admin-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.admin-search {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fffaf4;
+  color: var(--panel-text);
+  font: inherit;
+}
+
+.admin-count {
+  margin: 0 0 12px;
+  color: var(--muted-text);
+  font-size: 0.9rem;
+}
+
+.admin-card,
+.admin-row {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #fffaf4;
+  border: 1px solid var(--border);
+  text-align: start;
+}
+
+.admin-add,
+.admin-site {
+  margin-bottom: 14px;
+}
+
+.admin-add-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 10px;
+}
+
+.admin-prices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-card label,
+.admin-row-edit label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted-text);
+  font-size: 0.9rem;
+}
+
+.admin-card input,
+.admin-card textarea,
+.admin-card select,
+.admin-row-edit input,
+.admin-row-edit textarea,
+.admin-row-edit select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #faf6f0;
+  color: var(--panel-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-row-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto minmax(220px, 1.1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-row-name {
+  border: 0;
+  background: transparent;
+  text-align: start;
+  cursor: pointer;
+  color: inherit;
+}
+
+.admin-row-name strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.admin-row-name span {
+  color: var(--muted-text);
+  font-size: 0.88rem;
+}
+
+.admin-row-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-row-flags em {
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(107, 70, 48, 0.14);
+  color: #6b4630;
+}
+
+.admin-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: end;
+}
+
+.admin-btn {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--pop-face);
+  color: var(--button-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-btn-add {
+  background: #1a1612;
+  color: #f6efe4;
+  border-color: #1a1612;
+}
+
+.admin-btn-danger {
+  background: #f4e4e0;
+  color: #8a3a3a;
+  border-color: #e0c4bc;
+}
+
+.admin-btn-ghost {
+  background: transparent;
+}
+
+.admin-row-edit {
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.admin-row.is-unavailable {
+  opacity: 0.72;
+}
+
+.admin-row.is-removed {
+  opacity: 0.5;
+}
+
+.place-map {
+  width: 100%;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  min-height: 220px;
+}
+
+.place-map iframe {
+  display: block;
+  width: 100%;
+  height: 240px;
+  border: 0;
+}
+
+.visit-map {
+  grid-column: 1 / -1;
+}
+
+.overlay-shell .place-map iframe {
+  height: 220px;
+}
+
+@media (max-width: 820px) {
+  .admin-toolbar,
+  .admin-add-grid,
+  .admin-row-main {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-row-actions {
+    justify-content: stretch;
+  }
+
+  .admin-row-actions .admin-btn {
+    flex: 1;
+  }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Admin/AdminPage.jsx</h2>
+<pre><code>import React, { useEffect, useMemo, useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { closeOverlayPage } from '../../utils/pageOverlay';
+import { EMPTY_SITE_CONTENT } from '../../utils/siteContent';
+import { PlaceMap } from '../Common/PlaceMap';
+import './AdminPage.css';
+
+function linesToText(value) {
+  return Array.isArray(value) ? value.join('\n') : '';
+}
+
+function textToLines(value) {
+  return value
+    .split('\n')
+    .map((line) =&gt; line.trim())
+    .filter(Boolean);
+}
+
+function formatPrice(n) {
+  return Number(n || 0).toLocaleString('fa-IR');
+}
+
+export function AdminPage() {
+  const { language, menu, updateMenuItem, addMenuItem, removeMenuItem, restoreMenuItem, updateSiteContent, siteContent, isAdmin } = useApp();
+  const text = UI[language] || UI.fa;
+  const [tab, setTab] = useState('menu');
+  const [query, setQuery] = useState('');
+  const [openId, setOpenId] = useState('');
+  const [showAdd, setShowAdd] = useState(true);
+  const [drafts, setDrafts] = useState({});
+  const [savedId, setSavedId] = useState('');
+  const [siteDraft, setSiteDraft] = useState({ ...EMPTY_SITE_CONTENT, ...siteContent });
+  const [siteSaved, setSiteSaved] = useState(false);
+  const [mapError, setMapError] = useState(false);
+  const [newItem, setNewItem] = useState({ name: '', category: 'hot', blurb: '', s: '', m: '', l: '' });
+  const [addError, setAddError] = useState(false);
+
+  useEffect(() =&gt; {
+    setSiteDraft({ ...EMPTY_SITE_CONTENT, ...siteContent });
+  }, [siteContent]);
+
+  const rows = useMemo(
+    () =&gt; menu.map((drink) =&gt; {
+      const draft = drafts[drink.id] || {};
+      return {
+        drink,
+        name: draft.name ?? (drink.names[language] || drink.names.en || ''),
+        category: draft.category ?? drink.category,
+        prices: draft.prices || { ...drink.prices },
+        blurb: draft.blurb ?? (drink.blurb[language] || drink.blurb.en || ''),
+        specs: draft.specs ?? linesToText(drink.details?.specs?.[language] || drink.details?.specs?.en),
+        ingredients: draft.ingredients ?? linesToText(drink.details?.ingredients?.[language] || drink.details?.ingredients?.en)
+      };
+    }),
+    [menu, drafts, language]
+  );
+
+  const visibleRows = useMemo(() =&gt; {
+    const q = query.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter((row) =&gt; {
+      const name = `${row.name} ${row.drink.names?.fa || ''} ${row.drink.names?.en || ''}`.toLowerCase();
+      return name.includes(q);
+    });
+  }, [query, rows]);
+
+  const patchDraft = (id, next) =&gt; {
+    setDrafts((prev) =&gt; ({ ...prev, [id]: { ...(prev[id] || {}), ...next } }));
+    setSavedId('');
+  };
+
+  const saveItem = (row) =&gt; {
+    updateMenuItem(row.drink.id, {
+      names: { [language]: row.name },
+      category: row.category,
+      prices: {
+        s: Number(row.prices.s) || 0,
+        m: Number(row.prices.m) || 0,
+        l: Number(row.prices.l) || 0
+      },
+      blurb: { [language]: row.blurb },
+      details: {
+        specs: { [language]: textToLines(row.specs) },
+        ingredients: { [language]: textToLines(row.ingredients) }
+      }
+    });
+    setDrafts((prev) =&gt; {
+      const next = { ...prev };
+      delete next[row.drink.id];
+      return next;
+    });
+    setSavedId(row.drink.id);
+  };
+
+  const hasPlace = Boolean(siteDraft.address || (siteDraft.mapLat &amp;&amp; siteDraft.mapLng));
+
+  const saveSite = (withMap = false, turnOffMap = false) =&gt; {
+    const mapOn = turnOffMap ? false : (withMap ? hasPlace : Boolean(siteDraft.mapOn &amp;&amp; hasPlace));
+    updateSiteContent({ ...siteDraft, mapOn });
+    setSiteDraft((prev) =&gt; ({ ...prev, mapOn }));
+    setMapError(false);
+    setSiteSaved(true);
+  };
+
+  const registerMap = () =&gt; {
+    if (!hasPlace) {
+      setSiteSaved(false);
+      setMapError(true);
+      return;
+    }
+    saveSite(true);
+  };
+
+  const addDrink = () =&gt; {
+    if (!newItem.name.trim()) {
+      setAddError(true);
+      return;
+    }
+    const id = addMenuItem({
+      name: newItem.name,
+      category: newItem.category,
+      blurb: newItem.blurb,
+      prices: { s: newItem.s, m: newItem.m, l: newItem.l }
+    });
+    if (id) {
+      setNewItem({ name: '', category: 'hot', blurb: '', s: '', m: '', l: '' });
+      setAddError(false);
+      setSavedId(id);
+      setOpenId(id);
+      setShowAdd(false);
+      setTab('menu');
+    }
+  };
+
+  const deleteDrink = (id) =&gt; {
+    if (window.confirm(text.confirmDelete)) removeMenuItem(id);
+  };
+
+  if (!isAdmin) {
+    return (
+      &lt;section className="overlay-page ceramic-overlay" id="adminPage"&gt;
+        &lt;div className="overlay-shell"&gt;
+          &lt;h2&gt;{text.adminTitle}&lt;/h2&gt;
+          &lt;p&gt;{text.loginFirst}&lt;/p&gt;
+          &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('adminPage')}&gt;{text.back}&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+    );
+  }
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="adminPage"&gt;
+      &lt;div className="overlay-shell wide admin-shell"&gt;
+        &lt;header className="admin-head"&gt;
+          &lt;div&gt;
+            &lt;h2&gt;{text.adminTitle}&lt;/h2&gt;
+            &lt;p className="hero-lead"&gt;{text.adminLead}&lt;/p&gt;
+          &lt;/div&gt;
+          &lt;div className="admin-tabs" role="tablist"&gt;
+            &lt;button type="button" className={tab === 'menu' ? 'is-on' : ''} onClick={() =&gt; setTab('menu')}&gt;
+              &lt;i className="fas fa-mug-hot" aria-hidden="true" /&gt; {text.coffeeList}
+            &lt;/button&gt;
+            &lt;button type="button" className={tab === 'site' ? 'is-on' : ''} onClick={() =&gt; setTab('site')}&gt;
+              &lt;i className="fas fa-gear" aria-hidden="true" /&gt; {text.adminSiteTab}
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/header&gt;
+
+        {tab === 'menu' &amp;&amp; (
+          &lt;&gt;
+            &lt;div className="admin-toolbar"&gt;
+              &lt;input
+                className="admin-search"
+                value={query}
+                onChange={(e) =&gt; setQuery(e.target.value)}
+                placeholder={text.searchCoffee}
+              /&gt;
+              &lt;button type="button" className="admin-btn admin-btn-add" onClick={() =&gt; setShowAdd((v) =&gt; !v)}&gt;
+                &lt;i className="fas fa-plus" aria-hidden="true" /&gt; {text.addItem}
+              &lt;/button&gt;
+            &lt;/div&gt;
+            &lt;p className="admin-count"&gt;{visibleRows.length} / {rows.length}&lt;/p&gt;
+
+            {showAdd &amp;&amp; (
+              &lt;article className="admin-card admin-add"&gt;
+                &lt;h3&gt;{text.addItem}&lt;/h3&gt;
+                &lt;div className="admin-add-grid"&gt;
+                  &lt;label&gt;
+                    {text.itemName}
+                    &lt;input value={newItem.name} onChange={(e) =&gt; { setNewItem({ ...newItem, name: e.target.value }); setAddError(false); }} /&gt;
+                  &lt;/label&gt;
+                  &lt;label&gt;
+                    {text.itemCategory}
+                    &lt;select value={newItem.category} onChange={(e) =&gt; setNewItem({ ...newItem, category: e.target.value })}&gt;
+                      &lt;option value="hot"&gt;{text.hot}&lt;/option&gt;
+                      &lt;option value="cold"&gt;{text.cold}&lt;/option&gt;
+                      &lt;option value="specialty"&gt;{text.specialty}&lt;/option&gt;
+                    &lt;/select&gt;
+                  &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div className="admin-prices"&gt;
+                  {['s', 'm', 'l'].map((size) =&gt; (
+                    &lt;label key={size}&gt;
+                      {text[`size${size.toUpperCase()}`]}
+                      &lt;input type="number" min="0" step="1000" value={newItem[size]} onChange={(e) =&gt; setNewItem({ ...newItem, [size]: e.target.value })} /&gt;
+                    &lt;/label&gt;
+                  ))}
+                &lt;/div&gt;
+                &lt;label&gt;
+                  {text.detailsBtn}
+                  &lt;textarea rows="2" value={newItem.blurb} onChange={(e) =&gt; setNewItem({ ...newItem, blurb: e.target.value })} /&gt;
+                &lt;/label&gt;
+                &lt;div className="admin-row-actions"&gt;
+                  &lt;button type="button" className="admin-btn admin-btn-add" onClick={addDrink}&gt;{text.addItem}&lt;/button&gt;
+                  &lt;button type="button" className="admin-btn admin-btn-ghost" onClick={() =&gt; setShowAdd(false)}&gt;{text.cancel}&lt;/button&gt;
+                &lt;/div&gt;
+                {addError &amp;&amp; &lt;p className="form-msg bad"&gt;{text.itemNeedName}&lt;/p&gt;}
+                {savedId.startsWith('custom-') &amp;&amp; &lt;p className="form-msg ok"&gt;{text.savedOk}&lt;/p&gt;}
+              &lt;/article&gt;
+            )}
+
+            &lt;div className="admin-list"&gt;
+              {visibleRows.map((row) =&gt; {
+                const open = openId === row.drink.id;
+                const soldOut = row.drink.available === false;
+                const gone = Boolean(row.drink.removed);
+                return (
+                  &lt;article key={row.drink.id} className={`admin-row ${soldOut ? 'is-unavailable' : ''} ${gone ? 'is-removed' : ''} ${open ? 'is-open' : ''}`}&gt;
+                    &lt;div className="admin-row-main"&gt;
+                      &lt;button type="button" className="admin-row-name" onClick={() =&gt; setOpenId(open ? '' : row.drink.id)}&gt;
+                        &lt;strong&gt;{row.name}&lt;/strong&gt;
+                        &lt;span&gt;{text[row.category] || row.category} · {formatPrice(row.prices.m)} {text.toman}&lt;/span&gt;
+                      &lt;/button&gt;
+                      &lt;div className="admin-row-flags"&gt;
+                        {soldOut &amp;&amp; &lt;em&gt;{text.soldOut}&lt;/em&gt;}
+                        {gone &amp;&amp; &lt;em&gt;{text.deleteItem}&lt;/em&gt;}
+                      &lt;/div&gt;
+                      &lt;div className="admin-row-actions"&gt;
+                        &lt;button type="button" className="admin-btn" onClick={() =&gt; setOpenId(open ? '' : row.drink.id)}&gt;
+                          {open ? text.closeDetails : text.editItem}
+                        &lt;/button&gt;
+                        &lt;button
+                          type="button"
+                          className="admin-btn"
+                          onClick={() =&gt; updateMenuItem(row.drink.id, { available: soldOut })}
+                        &gt;
+                          {soldOut ? text.markAvailable : text.markUnavailable}
+                        &lt;/button&gt;
+                        {gone ? (
+                          &lt;button type="button" className="admin-btn" onClick={() =&gt; restoreMenuItem(row.drink.id)}&gt;{text.restoreItem}&lt;/button&gt;
+                        ) : (
+                          &lt;button type="button" className="admin-btn admin-btn-danger" onClick={() =&gt; deleteDrink(row.drink.id)}&gt;{text.deleteItem}&lt;/button&gt;
+                        )}
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                    {open &amp;&amp; (
+                      &lt;div className="admin-row-edit"&gt;
+                        &lt;label&gt;
+                          {text.itemName}
+                          &lt;input value={row.name} onChange={(e) =&gt; patchDraft(row.drink.id, { name: e.target.value })} /&gt;
+                        &lt;/label&gt;
+                        &lt;label&gt;
+                          {text.itemCategory}
+                          &lt;select value={row.category} onChange={(e) =&gt; patchDraft(row.drink.id, { category: e.target.value })}&gt;
+                            &lt;option value="hot"&gt;{text.hot}&lt;/option&gt;
+                            &lt;option value="cold"&gt;{text.cold}&lt;/option&gt;
+                            &lt;option value="specialty"&gt;{text.specialty}&lt;/option&gt;
+                          &lt;/select&gt;
+                        &lt;/label&gt;
+                        &lt;div className="admin-prices"&gt;
+                          {['s', 'm', 'l'].map((size) =&gt; (
+                            &lt;label key={size}&gt;
+                              {text[`size${size.toUpperCase()}`]}
+                              &lt;input type="number" min="0" step="1000" value={row.prices[size]} onChange={(e) =&gt; patchDraft(row.drink.id, { prices: { ...row.prices, [size]: e.target.value } })} /&gt;
+                            &lt;/label&gt;
+                          ))}
+                        &lt;/div&gt;
+                        &lt;label&gt;
+                          {text.detailsBtn}
+                          &lt;textarea rows="3" value={row.blurb} onChange={(e) =&gt; patchDraft(row.drink.id, { blurb: e.target.value })} /&gt;
+                        &lt;/label&gt;
+                        &lt;label&gt;
+                          {text.specs}
+                          &lt;textarea rows="4" value={row.specs} onChange={(e) =&gt; patchDraft(row.drink.id, { specs: e.target.value })} /&gt;
+                        &lt;/label&gt;
+                        &lt;label&gt;
+                          {text.ingredients}
+                          &lt;textarea rows="3" value={row.ingredients} onChange={(e) =&gt; patchDraft(row.drink.id, { ingredients: e.target.value })} /&gt;
+                        &lt;/label&gt;
+                        &lt;button type="button" className="admin-btn admin-btn-add" onClick={() =&gt; saveItem(row)}&gt;{text.saveChanges}&lt;/button&gt;
+                        {savedId === row.drink.id &amp;&amp; &lt;p className="form-msg ok"&gt;{text.savedOk}&lt;/p&gt;}
+                      &lt;/div&gt;
+                    )}
+                  &lt;/article&gt;
+                );
+              })}
+            &lt;/div&gt;
+          &lt;/&gt;
+        )}
+
+        {tab === 'site' &amp;&amp; (
+          &lt;article className="admin-card admin-site"&gt;
+            &lt;h3&gt;{text.siteSettings}&lt;/h3&gt;
+            &lt;label&gt;
+              {text.brand}
+              &lt;input value={siteDraft.brand} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, brand: e.target.value }); setSiteSaved(false); setMapError(false); }} /&gt;
+            &lt;/label&gt;
+            &lt;label&gt;
+              {text.pageTitle}
+              &lt;input value={siteDraft.title} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, title: e.target.value }); setSiteSaved(false); }} /&gt;
+            &lt;/label&gt;
+            &lt;label&gt;
+              {text.pageText}
+              &lt;textarea rows="3" value={siteDraft.text} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, text: e.target.value }); setSiteSaved(false); }} /&gt;
+            &lt;/label&gt;
+            &lt;label&gt;
+              {text.hoursTitle}
+              &lt;input value={siteDraft.hours} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, hours: e.target.value }); setSiteSaved(false); }} /&gt;
+            &lt;/label&gt;
+            &lt;label&gt;
+              {text.contactAddress}
+              &lt;textarea rows="2" value={siteDraft.address} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, address: e.target.value }); setSiteSaved(false); }} /&gt;
+            &lt;/label&gt;
+            &lt;label&gt;
+              {text.contactPhone}
+              &lt;input value={siteDraft.phone} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, phone: e.target.value }); setSiteSaved(false); }} /&gt;
+            &lt;/label&gt;
+            &lt;div className="admin-prices"&gt;
+              &lt;label&gt;
+                {text.mapLat}
+                &lt;input value={siteDraft.mapLat} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, mapLat: e.target.value }); setSiteSaved(false); }} /&gt;
+              &lt;/label&gt;
+              &lt;label&gt;
+                {text.mapLng}
+                &lt;input value={siteDraft.mapLng} onChange={(e) =&gt; { setSiteDraft({ ...siteDraft, mapLng: e.target.value }); setSiteSaved(false); }} /&gt;
+              &lt;/label&gt;
+            &lt;/div&gt;
+            &lt;p className="hero-lead"&gt;{text.mapHint}&lt;/p&gt;
+            &lt;div className="admin-row-actions"&gt;
+              &lt;button type="button" className="admin-btn admin-btn-add" onClick={() =&gt; saveSite(false)}&gt;{text.saveChanges}&lt;/button&gt;
+              &lt;button type="button" className="admin-btn" onClick={registerMap}&gt;{text.registerMap}&lt;/button&gt;
+              {siteDraft.mapOn &amp;&amp; (
+                &lt;button type="button" className="admin-btn admin-btn-ghost" onClick={() =&gt; saveSite(false, true)}&gt;{text.hideMap}&lt;/button&gt;
+              )}
+            &lt;/div&gt;
+            {mapError &amp;&amp; &lt;p className="form-msg bad"&gt;{text.mapNeedPlace}&lt;/p&gt;}
+            {siteSaved &amp;&amp; &lt;p className="form-msg ok"&gt;{text.savedOk}&lt;/p&gt;}
+            &lt;PlaceMap site={{ ...siteDraft, mapOn: siteDraft.mapOn || hasPlace }} title={text.mapHeading} /&gt;
+          &lt;/article&gt;
+        )}
+
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('adminPage')}&gt;{text.back}&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Auth/AdminLoginPage.jsx</h2>
+<pre><code>import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { closeOverlayPage, openOverlayPage } from '../../utils/pageOverlay';
+import { UI } from '../../data/i18n';
+import { ADMIN, isAdminLogin } from '../../utils/admin';
+import { CoffeeCup } from '../Common/CoffeeCup';
+import { RingFrame } from '../Common/RingFrame';
+import './LoginRing.css';
+
+export function AdminLoginPage() {
+  const { loginUser, language } = useApp();
+  const text = UI[language] || UI.fa;
+  const isRtl = language === 'fa' || language === 'ar';
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [ok, setOk] = useState(false);
+
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault();
+    if (!isAdminLogin(username, password)) {
+      setOk(false);
+      setMessage(text.wrong);
+      return;
+    }
+    loginUser({ username: ADMIN.username, role: 'admin' });
+    setOk(true);
+    setMessage(text.successLogin);
+    window.setTimeout(() =&gt; {
+      closeOverlayPage('adminLoginPage');
+      openOverlayPage('adminPage');
+    }, 400);
+  };
+
+  return (
+    &lt;section className="auth-page ring-login-page" id="adminLoginPage"&gt;
+      &lt;span className="login-blob login-blob-a" aria-hidden="true" /&gt;
+      &lt;span className="login-blob login-blob-b" aria-hidden="true" /&gt;
+      &lt;span className="login-blob login-blob-c" aria-hidden="true" /&gt;
+      &lt;RingFrame className="is-live ring-login"&gt;
+        &lt;form className="ring-login-form" dir={isRtl ? 'rtl' : 'ltr'} onSubmit={handleSubmit}&gt;
+          &lt;CoffeeCup className="login-cup" /&gt;
+          &lt;h2&gt;{text.adminLogin}&lt;/h2&gt;
+          &lt;p className="ring-lead"&gt;{text.adminLoginLead}&lt;/p&gt;
+          &lt;label className="ring-field"&gt;
+            &lt;span className="visually-hidden"&gt;{text.username}&lt;/span&gt;
+            &lt;input
+              id="cafe-admin-user"
+              value={username}
+              onChange={(e) =&gt; setUsername(e.target.value)}
+              placeholder={text.username}
+              autoComplete="username"
+              required
+            /&gt;
+          &lt;/label&gt;
+          &lt;label className="ring-field"&gt;
+            &lt;span className="visually-hidden"&gt;{text.password}&lt;/span&gt;
+            &lt;input
+              id="cafe-admin-pass"
+              type="password"
+              value={password}
+              onChange={(e) =&gt; setPassword(e.target.value)}
+              placeholder={text.password}
+              autoComplete="current-password"
+              required
+            /&gt;
+          &lt;/label&gt;
+          &lt;p className={`form-msg ${ok ? 'ok' : message ? 'bad' : ''}`}&gt;{message}&lt;/p&gt;
+          &lt;button className="ring-submit" type="submit"&gt;{text.submitLogin}&lt;/button&gt;
+          &lt;div className="ring-links"&gt;
+            &lt;span /&gt;
+            &lt;button type="button" onClick={() =&gt; closeOverlayPage('adminLoginPage')}&gt;{text.back}&lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/RingFrame&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Auth/AuthSlide.css</h2>
+<pre><code>.ceramic-overlay,
+.auth-page.auth-slide-page {
+  --ceramic-ink: #2c241c;
+  --ceramic-muted: #6a5b4c;
+  --ceramic-card: #f4ece2;
+  --ceramic-line: rgba(92, 70, 48, 0.2);
+  --ceramic-accent: #6b4630;
+  --ceramic-accent-hover: #4e3222;
+  --ceramic-wash:
+    radial-gradient(circle at 30% 40%, rgba(232, 210, 176, .45) 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(196, 168, 132, .3) 0%, transparent 45%),
+    linear-gradient(145deg, #ddd6cc 0%, #d0c4b4 70%, #ddd6cc 100%);
+}
+
+.auth-page.auth-slide-page,
+.ceramic-overlay {
+  background: var(--ceramic-wash);
+}
+
+.auth-slide-box {
+  position: relative;
+  z-index: 2;
+  width: min(440px, 100%);
+  min-height: 520px;
+  max-height: min(90dvh, 760px);
+  overflow: auto;
+  background: var(--ceramic-card);
+  border: 1px solid var(--ceramic-line);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(45, 55, 70, 0.16);
+}
+
+.auth-slide-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 520px;
+  width: min(86%, 340px);
+  margin: 0 auto;
+  padding: 40px 0 36px;
+  text-align: center;
+  color: var(--ceramic-ink);
+}
+
+.auth-form,
+.overlay-form {
+  width: 100%;
+  display: grid;
+  gap: 14px;
+}
+
+.auth-slide-stack,
+.field {
+  display: grid;
+  gap: 6px;
+  text-align: start;
+}
+
+.auth-slide-content h2,
+.overlay-shell h2 {
+  font-family: Lalezar, "Playfair Display", serif;
+  font-size: 2rem;
+  margin: 10px 0 4px;
+}
+
+.auth-slide-lead {
+  color: var(--ceramic-muted);
+  margin-bottom: 18px;
+}
+
+.auth-form input,
+.overlay-form input,
+.overlay-form textarea,
+.overlay-form select,
+.panel-select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ceramic-line);
+  background: #faf6f0;
+  color: var(--ceramic-ink);
+}
+
+.auth-submit {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 24px;
+  background: #1a1612;
+  color: #f6efe4;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    0 10px 20px rgba(26, 18, 10, 0.22);
+}
+
+.auth-submit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 28%, rgba(255,255,255,.28) 48%, transparent 68%);
+  transform: translateX(-130%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.auth-submit:hover {
+  background: #2a1d14;
+}
+
+.auth-submit:hover::before {
+  transform: translateX(130%);
+}
+
+.ghost-btn,
+.auth-switch,
+.back-home {
+  margin-top: 10px;
+  border: 0;
+  background: transparent;
+  color: var(--ceramic-accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.form-msg { min-height: 1.4em; font-size: 0.92rem; }
+.form-msg.ok { color: #2f6b4f; }
+.form-msg.bad { color: #8a3a3a; }
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Auth/LoginPage.jsx</h2>
+<pre><code>import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { closeOverlayPage, openOverlayPage, switchOverlayPage } from '../../utils/pageOverlay';
+import { UI } from '../../data/i18n';
+import { ADMIN, isAdminLogin } from '../../utils/admin';
+import { CoffeeCup } from '../Common/CoffeeCup';
+import { RingFrame } from '../Common/RingFrame';
+import './LoginRing.css';
+
+export function LoginPage() {
+  const { loginUser, findAccount, findSavedUser, language } = useApp();
+  const text = UI[language] || UI.fa;
+  const isRtl = language === 'fa' || language === 'ar';
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [ok, setOk] = useState(false);
+
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault();
+    if (isAdminLogin(username, password)) {
+      loginUser({ username: ADMIN.username, role: 'admin' });
+      setOk(true);
+      setMessage(text.successLogin);
+      window.setTimeout(() =&gt; {
+        closeOverlayPage('loginPage');
+        openOverlayPage('adminPage');
+      }, 500);
+      return;
+    }
+
+    const match = findAccount(username, password) || (() =&gt; {
+      const saved = findSavedUser();
+      if (saved &amp;&amp; saved.username === username &amp;&amp; saved.password === password) return saved;
+      return null;
+    })();
+
+    if (!match) {
+      const saved = findSavedUser();
+      setOk(false);
+      setMessage(saved ? text.wrong : text.noUser);
+      return;
+    }
+    loginUser(match);
+    setOk(true);
+    setMessage(text.successLogin);
+    window.setTimeout(() =&gt; closeOverlayPage('loginPage'), 900);
+  };
+
+  return (
+    &lt;section className="auth-page ring-login-page" id="loginPage"&gt;
+      &lt;span className="login-blob login-blob-a" aria-hidden="true" /&gt;
+      &lt;span className="login-blob login-blob-b" aria-hidden="true" /&gt;
+      &lt;span className="login-blob login-blob-c" aria-hidden="true" /&gt;
+      &lt;RingFrame className="is-live ring-login"&gt;
+        &lt;form className="ring-login-form" dir={isRtl ? 'rtl' : 'ltr'} onSubmit={handleSubmit}&gt;
+          &lt;CoffeeCup className="login-cup" /&gt;
+          &lt;h2&gt;{text.login}&lt;/h2&gt;
+          &lt;p className="ring-lead"&gt;{text.loginLead}&lt;/p&gt;
+          &lt;label className="ring-field"&gt;
+            &lt;span className="visually-hidden"&gt;{text.username}&lt;/span&gt;
+            &lt;input
+              id="cafe-login-user"
+              value={username}
+              onChange={(e) =&gt; setUsername(e.target.value)}
+              placeholder={text.username}
+              autoComplete="username"
+              required
+            /&gt;
+          &lt;/label&gt;
+          &lt;label className="ring-field"&gt;
+            &lt;span className="visually-hidden"&gt;{text.password}&lt;/span&gt;
+            &lt;input
+              id="cafe-login-pass"
+              type="password"
+              value={password}
+              onChange={(e) =&gt; setPassword(e.target.value)}
+              placeholder={text.password}
+              autoComplete="current-password"
+              required
+            /&gt;
+          &lt;/label&gt;
+          &lt;p className={`form-msg ${ok ? 'ok' : message ? 'bad' : ''}`}&gt;{message}&lt;/p&gt;
+          &lt;button className="ring-submit" type="submit"&gt;{text.submitLogin}&lt;/button&gt;
+          &lt;div className="ring-links"&gt;
+            &lt;button type="button" onClick={() =&gt; switchOverlayPage('loginPage', 'signupPage')}&gt;{text.signup}&lt;/button&gt;
+            &lt;button type="button" onClick={() =&gt; closeOverlayPage('loginPage')}&gt;{text.back}&lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/RingFrame&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Auth/LoginRing.css</h2>
+<pre><code>.ring-login-page {
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(196, 138, 74, 0.28), transparent 34%),
+    radial-gradient(circle at 84% 78%, rgba(107, 70, 48, 0.45), transparent 40%),
+    #120e0b;
+}
+
+.login-blob {
+  position: absolute;
+  border-radius: 42% 58% 56% 44% / 46% 42% 58% 54%;
+  filter: blur(28px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.login-blob-a {
+  width: min(280px, 48vw);
+  height: min(280px, 48vw);
+  top: 8%;
+  inset-inline-start: 6%;
+  background: #c48a4a;
+  animation: blobFloat 9s ease-in-out infinite;
+}
+
+.login-blob-b {
+  width: min(220px, 40vw);
+  height: min(220px, 40vw);
+  bottom: 10%;
+  inset-inline-end: 8%;
+  background: #e8c56b;
+  animation: blobFloat 11s ease-in-out infinite reverse;
+}
+
+.login-blob-c {
+  width: min(160px, 32vw);
+  height: min(160px, 32vw);
+  top: 42%;
+  inset-inline-start: 42%;
+  background: #6b4630;
+  animation: blobFloat 8s ease-in-out infinite 1s;
+}
+
+.ring-login {
+  width: min(540px, 94vw);
+  height: min(540px, 94vw);
+  z-index: 1;
+}
+
+.ring-login-form {
+  position: relative;
+  z-index: 1;
+  width: min(300px, 78%);
+  display: grid;
+  gap: 12px;
+  padding: 22px 18px 18px;
+  text-align: center;
+  color: #f6efe4;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.login-cup {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+}
+
+.ring-login-page .brand-cup-disc {
+  fill: rgba(246, 234, 216, 0.18);
+  stroke: #e8c56b;
+}
+
+.ring-login-form h2 {
+  font-family: Lalezar, "Playfair Display", serif;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.ring-lead {
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(246, 239, 228, 0.78);
+}
+
+.ring-field input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.ring-field input:focus {
+  border-color: #e8c56b;
+  box-shadow: 0 0 0 3px rgba(232, 197, 107, 0.22);
+}
+
+.ring-field input::placeholder {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.ring-submit {
+  width: 100%;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 40px;
+  background: linear-gradient(45deg, #6b4630, #e8c56b);
+  color: #1a1612;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ring-submit:hover {
+  filter: brightness(1.06);
+}
+
+.ring-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ring-links button {
+  border: 0;
+  background: transparent;
+  color: #f3d2b0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ring-login-page .form-msg {
+  min-height: 1.2em;
+  margin: 0;
+  color: #f6efe4;
+}
+
+.ring-login-page .form-msg.ok { color: #b7e0c4; }
+.ring-login-page .form-msg.bad { color: #f0b4b4; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(16px, -18px, 0) scale(1.08); }
+}
+
+@media (max-width: 720px) {
+  .ring-login {
+    width: min(430px, 96vw);
+    height: min(430px, 96vw);
+  }
+
+  .ring-login-form {
+    width: min(260px, 78%);
+    padding: 16px 14px;
+    gap: 10px;
+  }
+
+  .ring-login-form h2 { font-size: 1.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-blob { animation: none; }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Auth/SignupPage.jsx</h2>
+<pre><code>import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { closeOverlayPage, switchOverlayPage } from '../../utils/pageOverlay';
+import { BrandMark } from '../Common/BrandMark';
+import { UI } from '../../data/i18n';
+import './AuthSlide.css';
+
+export function SignupPage() {
+  const { signupUser, language } = useApp();
+  const text = UI[language] || UI.fa;
+  const isRtl = language === 'fa' || language === 'ar';
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [ok, setOk] = useState(false);
+
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault();
+    try {
+      signupUser({ username, password });
+      setOk(true);
+      setMessage(text.successSignup);
+      window.setTimeout(() =&gt; closeOverlayPage('signupPage'), 900);
+    } catch {
+      setOk(false);
+      setMessage(text.exists);
+    }
+  };
+
+  return (
+    &lt;section className="auth-page auth-slide-page ceramic-overlay" id="signupPage"&gt;
+      &lt;div className="auth-slide-box"&gt;
+        &lt;div className="auth-slide-content" dir={isRtl ? 'rtl' : 'ltr'}&gt;
+          &lt;BrandMark /&gt;
+          &lt;h2&gt;{text.signup}&lt;/h2&gt;
+          &lt;p className="auth-slide-lead"&gt;{text.signupLead}&lt;/p&gt;
+          &lt;form className="auth-form" onSubmit={handleSubmit}&gt;
+            &lt;div className="auth-slide-stack"&gt;
+              &lt;label htmlFor="cafe-signup-user"&gt;{text.username}&lt;/label&gt;
+              &lt;input id="cafe-signup-user" value={username} onChange={(e) =&gt; setUsername(e.target.value)} required /&gt;
+            &lt;/div&gt;
+            &lt;div className="auth-slide-stack"&gt;
+              &lt;label htmlFor="cafe-signup-pass"&gt;{text.password}&lt;/label&gt;
+              &lt;input id="cafe-signup-pass" type="password" value={password} onChange={(e) =&gt; setPassword(e.target.value)} required /&gt;
+            &lt;/div&gt;
+            &lt;p className={`form-msg ${ok ? 'ok' : message ? 'bad' : ''}`}&gt;{message}&lt;/p&gt;
+            &lt;button className="auth-submit" type="submit"&gt;{text.submitSignup}&lt;/button&gt;
+          &lt;/form&gt;
+          &lt;button type="button" className="auth-switch" onClick={() =&gt; switchOverlayPage('signupPage', 'loginPage')}&gt;
+            {text.login}
+          &lt;/button&gt;
+          &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('signupPage')}&gt;{text.back}&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Common/BrandMark.jsx</h2>
+<pre><code>import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { pickSite } from '../../utils/siteContent';
+import { CoffeeCup } from './CoffeeCup';
+
+export function BrandMark() {
+  const { siteContent } = useApp();
+  const custom = pickSite(siteContent, 'brand');
+
+  return (
+    &lt;div className="brand-mark"&gt;
+      &lt;CoffeeCup /&gt;
+      &lt;span className="brand-text"&gt;
+        {custom ? (
+          &lt;strong className="brand-custom"&gt;{custom}&lt;/strong&gt;
+        ) : (
+          &lt;&gt;
+            &lt;strong&gt;NOVA&lt;/strong&gt;
+            &lt;small&gt;CAFÉ&lt;/small&gt;
+          &lt;/&gt;
+        )}
+      &lt;/span&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Common/CoffeeCup.css</h2>
+<pre><code>.brand-cup {
+  width: 42px;
+  height: 42px;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+.brand-cup-disc {
+  fill: #f6ead8;
+  stroke: #c4a07a;
+  stroke-width: 1.6;
+}
+
+.brand-cup-body {
+  fill: #fffaf3;
+  stroke: #d7c4ad;
+  stroke-width: 1.4;
+}
+
+.brand-cup-lip {
+  fill: #fffdf9;
+  stroke: #d7c4ad;
+  stroke-width: 1.4;
+}
+
+.brand-cup-coffee {
+  fill: #4a2c1a;
+}
+
+.brand-cup-crema {
+  fill: #c48a4a;
+  opacity: 0.55;
+}
+
+.brand-cup-handle {
+  fill: none;
+  stroke: #8a6248;
+  stroke-width: 3.6;
+  stroke-linecap: round;
+}
+
+.brand-cup-saucer {
+  fill: #f3e6d4;
+  stroke: #d7c4ad;
+  stroke-width: 1.3;
+}
+
+.brand-cup-saucer-shine {
+  fill: #fffaf3;
+  opacity: 0.7;
+}
+
+.brand-cup-steam {
+  fill: none;
+  stroke: #c4a07a;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brand-cup-steam {
+    animation: cupSteam 2.8s ease-in-out infinite;
+  }
+}
+
+@keyframes cupSteam {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Common/CoffeeCup.jsx</h2>
+<pre><code>import React from 'react';
+import './CoffeeCup.css';
+
+export function CoffeeCup({ className = '' }) {
+  return (
+    &lt;svg className={`brand-cup ${className}`.trim()} viewBox="0 0 80 80" aria-hidden="true"&gt;
+      &lt;circle className="brand-cup-disc" cx="40" cy="40" r="37" /&gt;
+      &lt;path className="brand-cup-steam" d="M30 12c1 5-4 6-3 11" /&gt;
+      &lt;path className="brand-cup-steam" d="M39 9c1 6-4 7-3 13" /&gt;
+      &lt;path className="brand-cup-steam" d="M48 12c1 5-4 6-3 11" /&gt;
+      &lt;ellipse className="brand-cup-saucer" cx="38" cy="64" rx="22" ry="5.2" /&gt;
+      &lt;ellipse className="brand-cup-saucer-shine" cx="38" cy="62.6" rx="15" ry="2.2" /&gt;
+      &lt;path className="brand-cup-handle" d="M55 33c11 1 14 12 7 19-3.5 3.5-10 5-15 4" /&gt;
+      &lt;path className="brand-cup-body" d="M21 30h34c1.4 15-.6 26-8 32H29c-7-6-8.6-17-8-32z" /&gt;
+      &lt;ellipse className="brand-cup-lip" cx="38" cy="30" rx="17" ry="6" /&gt;
+      &lt;ellipse className="brand-cup-coffee" cx="38" cy="31.2" rx="13.4" ry="3.8" /&gt;
+      &lt;ellipse className="brand-cup-crema" cx="34" cy="30.6" rx="5.2" ry="1.5" /&gt;
+    &lt;/svg&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Common/PlaceMap.jsx</h2>
+<pre><code>import React from 'react';
+import { mapEmbedSrc } from '../../utils/siteContent';
+
+export function PlaceMap({ site, title }) {
+  const src = mapEmbedSrc(site);
+  if (!src) return null;
+  return (
+    &lt;div className="place-map"&gt;
+      &lt;iframe
+        title={title}
+        src={src}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Common/RingFrame.css</h2>
+<pre><code>.ring {
+  position: relative;
+  width: min(500px, 92vw);
+  height: min(500px, 92vw);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring-line {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #fff;
+  pointer-events: none;
+}
+
+.ring-line:nth-child(1) {
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: ringSpin 6s linear infinite;
+}
+
+.ring-line:nth-child(2) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: ringSpin 4s linear infinite;
+}
+
+.ring-line:nth-child(3) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: ringSpinReverse 10s linear infinite;
+}
+
+.ring:hover .ring-line,
+.ring.is-live .ring-line {
+  border: 3px solid var(--clr);
+  filter: drop-shadow(0 0 16px var(--clr));
+}
+
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ringSpinReverse {
+  to { transform: rotate(-360deg); }
+}
+
+.ring-intro-mark {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #f6efe4;
+}
+
+.ring-intro-mark strong {
+  display: block;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  letter-spacing: 0.28em;
+}
+
+.ring-intro-mark small {
+  display: block;
+  margin-top: 6px;
+  letter-spacing: 0.32em;
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-line { animation: none; }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Common/RingFrame.jsx</h2>
+<pre><code>import React from 'react';
+import './RingFrame.css';
+
+export function RingFrame({ children, className = '' }) {
+  return (
+    &lt;div className={`ring ${className}`}&gt;
+      &lt;i className="ring-line" style={{ '--clr': '#c48a4a' }} /&gt;
+      &lt;i className="ring-line" style={{ '--clr': '#6b4630' }} /&gt;
+      &lt;i className="ring-line" style={{ '--clr': '#e8c56b' }} /&gt;
+      {children}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Contact/ContactPage.jsx</h2>
+<pre><code>import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { closeOverlayPage } from '../../utils/pageOverlay';
+import { pickSite } from '../../utils/siteContent';
+import { PlaceMap } from '../Common/PlaceMap';
+
+export function ContactPage() {
+  const { language, siteContent } = useApp();
+  const text = UI[language] || UI.fa;
+  const [message, setMessage] = useState('');
+  const hours = pickSite(siteContent, 'hours');
+  const address = pickSite(siteContent, 'address');
+  const phone = pickSite(siteContent, 'phone');
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="contactPage"&gt;
+      &lt;div className="overlay-shell"&gt;
+        &lt;h2&gt;{text.contactTitle}&lt;/h2&gt;
+        {hours &amp;&amp; &lt;p&gt;{text.hoursTitle}: {hours}&lt;/p&gt;}
+        {address &amp;&amp; &lt;p&gt;{text.contactAddress}: {address}&lt;/p&gt;}
+        {phone &amp;&amp; &lt;p&gt;{text.contactPhone}: &lt;a href={`tel:${phone.replace(/\s+/g, '')}`}&gt;{phone}&lt;/a&gt;&lt;/p&gt;}
+        {!hours &amp;&amp; !address &amp;&amp; !phone &amp;&amp; !siteContent?.mapOn &amp;&amp; (
+          &lt;p className="hero-lead"&gt;{text.placeEmpty}&lt;/p&gt;
+        )}
+        &lt;PlaceMap site={siteContent} title={text.mapHeading} /&gt;
+        &lt;form
+          className="overlay-form"
+          onSubmit={(e) =&gt; {
+            e.preventDefault();
+            setMessage(text.sent);
+          }}
+        &gt;
+          &lt;div className="field"&gt;
+            &lt;label htmlFor="contact-name"&gt;{text.name}&lt;/label&gt;
+            &lt;input id="contact-name" required /&gt;
+          &lt;/div&gt;
+          &lt;div className="field"&gt;
+            &lt;label htmlFor="contact-msg"&gt;{text.message}&lt;/label&gt;
+            &lt;textarea id="contact-msg" rows="4" required /&gt;
+          &lt;/div&gt;
+          &lt;p className={`form-msg ${message ? 'ok' : ''}`}&gt;{message}&lt;/p&gt;
+          &lt;button className="primary-btn" type="submit"&gt;{text.send}&lt;/button&gt;
+        &lt;/form&gt;
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('contactPage')}&gt;{text.back}&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Home/HomePage.jsx</h2>
+<pre><code>import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { openOverlayPage } from '../../utils/pageOverlay';
+import { pickSite } from '../../utils/siteContent';
+import { PlaceMap } from '../Common/PlaceMap';
+
+export function HomePage() {
+  const { isLoggedIn, language, siteContent } = useApp();
+  const text = UI[language] || UI.fa;
+  const [activeAction, setActiveAction] = React.useState('signup');
+  const title = pickSite(siteContent, 'title', text.title);
+  const lead = pickSite(siteContent, 'text', text.text);
+  const hours = pickSite(siteContent, 'hours');
+  const address = pickSite(siteContent, 'address');
+  const phone = pickSite(siteContent, 'phone');
+  const hasPlace = Boolean(hours || address || phone || siteContent?.mapOn);
+
+  const actions = [
+    { id: 'signup', label: text.signup, detail: text.loginDetail, icon: 'fa-user-plus', run: () =&gt; openOverlayPage('signupPage') },
+    { id: 'login', label: text.login, detail: text.loginDetail, icon: 'fa-right-to-bracket', run: () =&gt; openOverlayPage('loginPage') },
+    { id: 'menu', label: text.menu, detail: text.menuDetail, icon: 'fa-mug-hot', run: () =&gt; openOverlayPage('menuPage') },
+    {
+      id: 'order',
+      label: text.order,
+      detail: text.orderDetail,
+      icon: 'fa-bag-shopping',
+      run: () =&gt; {
+        if (!isLoggedIn) {
+          window.alert(text.loginFirst);
+          openOverlayPage('loginPage');
+          return;
+        }
+        openOverlayPage('orderPage');
+      }
+    },
+    { id: 'orders', label: text.myOrders, detail: text.myOrdersDetail, icon: 'fa-receipt', run: () =&gt; (isLoggedIn ? openOverlayPage('myOrdersPage') : openOverlayPage('loginPage')) },
+    { id: 'contact', label: text.contact, detail: text.contactDetail, icon: 'fa-envelope', run: () =&gt; openOverlayPage('contactPage') }
+  ];
+
+  const current = actions.find((item) =&gt; item.id === activeAction) || actions[0];
+
+  return (
+    &lt;main className="home-page" id="site-main"&gt;
+      &lt;section className="hero-panel"&gt;
+        &lt;div className="hero-copy"&gt;
+          &lt;h1&gt;{title}&lt;/h1&gt;
+          &lt;p className="hero-lead"&gt;{lead}&lt;/p&gt;
+          &lt;p className="hero-detail"&gt;{current.detail}&lt;/p&gt;
+          &lt;button type="button" className="primary-btn glow-btn" onClick={current.run}&gt;
+            &lt;span className="btn-label"&gt;{current.label}&lt;/span&gt;
+          &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div className="hero-actions"&gt;
+          {actions.slice(0, 4).map((item) =&gt; (
+            &lt;button
+              key={item.id}
+              type="button"
+              className={`action-chip ${activeAction === item.id ? 'is-on' : ''}`}
+              onClick={() =&gt; setActiveAction(item.id)}
+            &gt;
+              &lt;i className={`fas ${item.icon}`} aria-hidden="true" /&gt;
+              &lt;span&gt;{item.label}&lt;/span&gt;
+            &lt;/button&gt;
+          ))}
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      {hasPlace &amp;&amp; (
+        &lt;section className="visit-strip" aria-label={text.visitUs}&gt;
+          {hours &amp;&amp; (
+            &lt;article className="visit-card"&gt;
+              &lt;h3&gt;{text.hoursTitle}&lt;/h3&gt;
+              &lt;p&gt;{hours}&lt;/p&gt;
+            &lt;/article&gt;
+          )}
+          {address &amp;&amp; (
+            &lt;article className="visit-card"&gt;
+              &lt;h3&gt;{text.contactAddress}&lt;/h3&gt;
+              &lt;p&gt;{address}&lt;/p&gt;
+            &lt;/article&gt;
+          )}
+          {phone &amp;&amp; (
+            &lt;article className="visit-card"&gt;
+              &lt;h3&gt;{text.contactPhone}&lt;/h3&gt;
+              &lt;p&gt;&lt;a href={`tel:${phone.replace(/\s+/g, '')}`}&gt;{phone}&lt;/a&gt;&lt;/p&gt;
+            &lt;/article&gt;
+          )}
+          {siteContent?.mapOn &amp;&amp; (
+            &lt;article className="visit-card visit-map"&gt;
+              &lt;h3&gt;{text.mapHeading}&lt;/h3&gt;
+              &lt;PlaceMap site={siteContent} title={text.mapHeading} /&gt;
+            &lt;/article&gt;
+          )}
+        &lt;/section&gt;
+      )}
+
+      &lt;section className="feature-grid"&gt;
+        &lt;h2&gt;{text.featureHeading}&lt;/h2&gt;
+        &lt;div className="cards"&gt;
+          {text.cards.map((card) =&gt; (
+            &lt;article key={card.title} className="feature-card"&gt;
+              &lt;h3&gt;{card.title}&lt;/h3&gt;
+              &lt;p&gt;{card.text}&lt;/p&gt;
+            &lt;/article&gt;
+          ))}
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section className="faq-block" aria-labelledby="faq-heading"&gt;
+        &lt;h2 id="faq-heading"&gt;{text.faqHeading}&lt;/h2&gt;
+        &lt;div className="faq-grid"&gt;
+          {text.faqs?.map((item) =&gt; (
+            &lt;article key={item.q} className="faq-item"&gt;
+              &lt;h3&gt;{item.q}&lt;/h3&gt;
+              &lt;p&gt;{item.a}&lt;/p&gt;
+            &lt;/article&gt;
+          ))}
+        &lt;/div&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/Background.jsx</h2>
+<pre><code>import React from 'react';
+
+export function Background() {
+  return &lt;div className="site-wash" aria-hidden="true" /&gt;;
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/CssCoffee.css</h2>
+<pre><code>.css-coffee {
+  position: relative;
+  width: min(540px, 92vw);
+  height: min(430px, 68vw);
+  margin: 0 auto;
+  display: grid;
+  place-items: end center;
+  pointer-events: none;
+}
+
+.coffee-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center 62%;
+  mix-blend-mode: multiply;
+  filter: saturate(1.08) contrast(1.04);
+  -webkit-mask-image: radial-gradient(ellipse 78% 82% at 50% 58%, #000 62%, transparent 86%);
+  mask-image: radial-gradient(ellipse 78% 82% at 50% 58%, #000 62%, transparent 86%);
+}
+
+@media (max-width: 720px) {
+  .css-coffee {
+    width: min(420px, 94vw);
+    height: min(300px, 72vw);
+  }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/CssCoffee.jsx</h2>
+<pre><code>import React from 'react';
+import { asset } from '../../utils/asset';
+import './CssCoffee.css';
+
+export function CssCoffee({ alt = '' }) {
+  return (
+    &lt;div className="css-coffee"&gt;
+      &lt;img
+        className="coffee-photo"
+        src={asset('hero-coffee.png')}
+        alt={alt}
+        width="1024"
+        height="768"
+        fetchPriority="high"
+        decoding="async"
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/Header.css</h2>
+<pre><code>.masthead {
+  position: relative;
+}
+
+.header {
+  --scroll: 0;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  width: 100%;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  transition:
+    background-color .4s ease,
+    box-shadow .4s ease,
+    border-color .4s ease,
+    backdrop-filter .4s ease;
+}
+
+[dir="ltr"] .header {
+  padding: 0 16px 0 62px;
+}
+
+[dir="rtl"] .header {
+  padding: 0 62px 0 16px;
+}
+
+.header.is-solid {
+  background: color-mix(in srgb, var(--surface-strong) 92%, white);
+  backdrop-filter: blur(18px);
+  border-bottom-color: var(--border);
+  box-shadow: 0 12px 30px var(--shadow);
+}
+
+.header-inner {
+  width: min(1180px, 100%);
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-gutter { display: block; }
+
+.logo,
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--panel-text);
+}
+
+.brand-mark {
+  text-decoration: none;
+}
+
+.brand-text {
+  display: grid;
+  line-height: 1;
+  text-align: start;
+}
+
+.brand-text strong {
+  font-size: 1.05rem;
+  letter-spacing: 0.22em;
+  font-weight: 800;
+}
+
+.brand-text small {
+  margin-top: 3px;
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  color: var(--muted-text);
+  font-weight: 700;
+}
+
+.brand-custom {
+  max-width: 42vw;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+}
+
+.header-nav {
+  display: flex;
+  justify-content: end;
+  gap: 6px;
+}
+
+.header-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--panel-text);
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.header.is-solid .header-nav button,
+.header-nav button:hover {
+  background: color-mix(in srgb, var(--surface) 80%, white);
+  border-color: var(--border);
+}
+
+.header-hero {
+  min-height: min(54vh, 500px);
+  display: grid;
+  place-items: end center;
+  padding: 4px 8px 0;
+}
+
+.header-hero-frame {
+  width: min(560px, 96vw);
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  transform-origin: 50% 70%;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 720px) {
+  .header-hero {
+    min-height: min(42vh, 340px);
+    padding: 0 4px;
+  }
+
+  .header-hero-frame {
+    width: min(430px, 96vw);
+  }
+
+  .header-nav button span { display: none; }
+
+  .header-nav button {
+    min-width: 40px;
+    justify-content: center;
+    padding: 8px;
+  }
+
+  .brand-text strong { font-size: 0.92rem; letter-spacing: 0.16em; }
+  .brand-text small { letter-spacing: 0.18em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-hero-frame { transition: none; }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/Header.jsx</h2>
+<pre><code>import React, { useEffect, useRef } from 'react';
+import { CssCoffee } from './CssCoffee';
+import { BrandMark } from '../Common/BrandMark';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { openOverlayPage } from '../../utils/pageOverlay';
+import './Header.css';
+
+export function Header() {
+  const { language, isLoggedIn } = useApp();
+  const text = UI[language] || UI.fa;
+  const heroRef = useRef(null);
+  const frameRef = useRef(null);
+  const headerRef = useRef(null);
+
+  useEffect(() =&gt; {
+    const hero = heroRef.current;
+    const frame = frameRef.current;
+    const header = headerRef.current;
+    if (!hero || !frame || !header) return undefined;
+
+    let target = 0;
+    let current = 0;
+    let running = 0;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
+    const apply = (value) =&gt; {
+      const ease = 1 - (1 - value) ** 3;
+      header.style.setProperty('--scroll', ease.toFixed(4));
+      frame.style.opacity = String(1 - ease * 0.42);
+      frame.style.transform = `translate3d(0, ${ease * -56}px, 0) scale(${1 - ease * 0.16})`;
+      header.classList.toggle('is-solid', value &gt; 0.06);
+    };
+
+    const tick = () =&gt; {
+      const speed = reduced ? 1 : 0.22;
+      current += (target - current) * speed;
+      if (Math.abs(target - current) &lt; 0.001) current = target;
+      apply(current);
+      running = Math.abs(target - current) &gt; 0.001 ? window.requestAnimationFrame(tick) : 0;
+    };
+
+    const read = () =&gt; {
+      const rect = hero.getBoundingClientRect();
+      const span = Math.max(rect.height * 0.72, 1);
+      target = Math.min(1, Math.max(0, -rect.top / span));
+      if (!running) running = window.requestAnimationFrame(tick);
+    };
+
+    apply(0);
+    read();
+    window.addEventListener('scroll', read, { passive: true });
+    window.addEventListener('resize', read);
+    return () =&gt; {
+      window.removeEventListener('scroll', read);
+      window.removeEventListener('resize', read);
+      if (running) window.cancelAnimationFrame(running);
+    };
+  }, []);
+
+  const goOrder = () =&gt; {
+    if (!isLoggedIn) {
+      window.alert(text.loginFirst);
+      openOverlayPage('loginPage');
+      return;
+    }
+    openOverlayPage('orderPage');
+  };
+
+  return (
+    &lt;div className="masthead"&gt;
+      &lt;header className="header" id="mainHeader" ref={headerRef}&gt;
+        &lt;div className="header-inner"&gt;
+          &lt;span className="header-gutter" aria-hidden="true" /&gt;
+          &lt;div className="logo"&gt;
+            &lt;BrandMark /&gt;
+          &lt;/div&gt;
+          &lt;nav className="header-nav" aria-label={text.brand}&gt;
+            &lt;button type="button" onClick={() =&gt; openOverlayPage('menuPage')}&gt;
+              &lt;i className="fas fa-mug-hot" aria-hidden="true" /&gt;
+              &lt;span&gt;{text.menu}&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;button type="button" onClick={goOrder}&gt;
+              &lt;i className="fas fa-bag-shopping" aria-hidden="true" /&gt;
+              &lt;span&gt;{text.order}&lt;/span&gt;
+            &lt;/button&gt;
+            &lt;button type="button" onClick={() =&gt; openOverlayPage('contactPage')}&gt;
+              &lt;i className="fas fa-location-dot" aria-hidden="true" /&gt;
+              &lt;span&gt;{text.contact}&lt;/span&gt;
+            &lt;/button&gt;
+          &lt;/nav&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+      &lt;section className="header-hero" ref={heroRef} aria-label={text.brand}&gt;
+        &lt;div className="header-hero-frame" ref={frameRef}&gt;
+          &lt;CssCoffee alt={text.brand} /&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/LogoIntro.css</h2>
+<pre><code>.logo-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  background: #14110e;
+}
+
+.logo-intro .ring {
+  width: min(340px, 78vw);
+  height: min(340px, 78vw);
+}
+
+.intro-cup {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 10px;
+}
+
+.logo-intro .brand-cup-disc {
+  fill: rgba(246, 234, 216, 0.16);
+  stroke: #e8c56b;
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/LogoIntro.jsx</h2>
+<pre><code>import React, { useEffect, useRef } from 'react';
+import { CoffeeCup } from '../Common/CoffeeCup';
+import { RingFrame } from '../Common/RingFrame';
+import './LogoIntro.css';
+
+export function LogoIntro({ onComplete = () =&gt; {}, dataReady = false }) {
+  const dataReadyRef = useRef(dataReady);
+  dataReadyRef.current = dataReady;
+
+  useEffect(() =&gt; {
+    let cancelled = false;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    const minimum = reduced ? 180 : 1700;
+    const started = Date.now();
+
+    const waitForData = () =&gt; new Promise((resolve) =&gt; {
+      const tick = () =&gt; {
+        if (cancelled || dataReadyRef.current) {
+          resolve();
+          return;
+        }
+        window.requestAnimationFrame(tick);
+      };
+      tick();
+    });
+
+    waitForData()
+      .then(() =&gt; {
+        const remain = minimum - (Date.now() - started);
+        return remain &gt; 0 ? new Promise((resolve) =&gt; window.setTimeout(resolve, remain)) : undefined;
+      })
+      .then(() =&gt; {
+        if (!cancelled) onComplete();
+      });
+
+    return () =&gt; {
+      cancelled = true;
+    };
+  }, [onComplete]);
+
+  return (
+    &lt;div className="logo-intro" role="presentation"&gt;
+      &lt;RingFrame className="is-live"&gt;
+        &lt;div className="ring-intro-mark"&gt;
+          &lt;CoffeeCup className="intro-cup" /&gt;
+          &lt;strong&gt;NOVA&lt;/strong&gt;
+          &lt;small&gt;CAFÉ&lt;/small&gt;
+        &lt;/div&gt;
+      &lt;/RingFrame&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/SiteFooter.css</h2>
+<pre><code>.site { display: block; }
+
+#site-content {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  box-shadow: #000 0 7px 35px 0;
+  pointer-events: none;
+}
+
+#site-content &gt; * { pointer-events: auto; }
+
+#site-footer {
+  padding: 36px 20px calc(28px + env(safe-area-inset-bottom));
+  font-size: 90%;
+  background-color: #241c16;
+  position: fixed;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.site-footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: #d8cfc4;
+  max-width: 720px;
+}
+
+.footer-brand {
+  font-family: Lalezar, "Playfair Display", serif;
+  font-size: 1.6rem;
+  color: #f6efe4;
+}
+
+.site-footer-inner address {
+  font-style: normal;
+  line-height: 1.8;
+}
+
+.site-footer-inner a {
+  color: #f3d2b0;
+}
+
+#site-footer .place-map {
+  width: min(520px, 100%);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 16px;
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 8px;
+}
+
+.footer-links button {
+  border: 0;
+  background: transparent;
+  color: #f6efe4;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 4px;
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  #site-footer {
+    min-height: 0;
+    padding: 28px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Layout/SiteFooter.jsx</h2>
+<pre><code>import React, { useEffect, useRef } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { openOverlayPage } from '../../utils/pageOverlay';
+import { pickSite } from '../../utils/siteContent';
+import { PlaceMap } from '../Common/PlaceMap';
+import './SiteFooter.css';
+
+export function SiteFooter() {
+  const footerRef = useRef(null);
+  const { language, siteContent } = useApp();
+  const text = UI[language] || UI.fa;
+  const brand = pickSite(siteContent, 'brand', text.brand);
+  const hours = pickSite(siteContent, 'hours');
+  const address = pickSite(siteContent, 'address');
+  const phone = pickSite(siteContent, 'phone');
+
+  useEffect(() =&gt; {
+    const content = document.getElementById('site-content');
+    const footer = footerRef.current;
+    if (!content || !footer) return undefined;
+    const siteFooter = () =&gt; {
+      content.style.marginBottom = `${footer.offsetHeight + 36}px`;
+    };
+    siteFooter();
+    window.addEventListener('resize', siteFooter);
+    const observer = new ResizeObserver(siteFooter);
+    observer.observe(footer);
+    return () =&gt; {
+      window.removeEventListener('resize', siteFooter);
+      observer.disconnect();
+    };
+  }, [hours, address, phone, siteContent?.mapOn]);
+
+  return (
+    &lt;footer id="site-footer" ref={footerRef}&gt;
+      &lt;div className="site-footer-inner"&gt;
+        &lt;p className="footer-brand"&gt;{brand}&lt;/p&gt;
+        {(address || phone || hours) &amp;&amp; (
+          &lt;address&gt;
+            {address &amp;&amp; &lt;&gt;{address}&lt;br /&gt;&lt;/&gt;}
+            {phone &amp;&amp; &lt;&gt;&lt;a href={`tel:${phone.replace(/\s+/g, '')}`}&gt;{phone}&lt;/a&gt;&lt;br /&gt;&lt;/&gt;}
+            {hours &amp;&amp; &lt;&gt;{text.hoursTitle}: {hours}&lt;/&gt;}
+          &lt;/address&gt;
+        )}
+        &lt;PlaceMap site={siteContent} title={text.mapHeading} /&gt;
+        &lt;nav className="footer-links" aria-label={brand}&gt;
+          &lt;button type="button" onClick={() =&gt; openOverlayPage('menuPage')}&gt;{text.menu}&lt;/button&gt;
+          &lt;button type="button" onClick={() =&gt; openOverlayPage('contactPage')}&gt;{text.contact}&lt;/button&gt;
+          &lt;button type="button" onClick={() =&gt; openOverlayPage('termsPage')}&gt;{text.termsBtn}&lt;/button&gt;
+        &lt;/nav&gt;
+        &lt;p&gt;{text.footerCopy}&lt;/p&gt;
+        &lt;small&gt;{text.copyright}&lt;/small&gt;
+      &lt;/div&gt;
+    &lt;/footer&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Legal/TermsPage.jsx</h2>
+<pre><code>import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { TERMS } from '../../data/terms';
+import { closeOverlayPage } from '../../utils/pageOverlay';
+
+export function TermsPage() {
+  const { language } = useApp();
+  const copy = TERMS[language] || TERMS.fa;
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="termsPage"&gt;
+      &lt;div className="overlay-shell wide" dir={copy.dir}&gt;
+        &lt;p className="eyebrow"&gt;{copy.kicker}&lt;/p&gt;
+        &lt;h2&gt;{copy.title}&lt;/h2&gt;
+        {copy.sections.map((section) =&gt; (
+          &lt;article key={section.title} className="terms-section"&gt;
+            &lt;h3&gt;{section.title}&lt;/h3&gt;
+            &lt;ul&gt;
+              {section.items.map((item) =&gt; (
+                &lt;li key={item}&gt;{item}&lt;/li&gt;
+              ))}
+            &lt;/ul&gt;
+          &lt;/article&gt;
+        ))}
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('termsPage')}&gt;
+          {copy.back}
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Menu/MenuPage.jsx</h2>
+<pre><code>import React, { useMemo, useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { closeOverlayPage, switchOverlayPage } from '../../utils/pageOverlay';
+
+function formatPrice(n) {
+  return n.toLocaleString('fa-IR');
+}
+
+function pickList(map, language) {
+  if (!map) return [];
+  if (Array.isArray(map)) return map;
+  return map[language] || map.en || map.fa || [];
+}
+
+export function MenuPage() {
+  const { language, setCart, isLoggedIn, menu } = useApp();
+  const text = UI[language] || UI.fa;
+  const [filter, setFilter] = useState('all');
+  const [openId, setOpenId] = useState('');
+  const drinks = useMemo(
+    () =&gt; menu.filter((item) =&gt; !item.removed &amp;&amp; (filter === 'all' || item.category === filter)),
+    [filter, menu]
+  );
+
+  const orderDrink = (drink) =&gt; {
+    if (drink.available === false) return;
+    setCart({ drinkId: drink.id, size: 'm', qty: 1 });
+    if (!isLoggedIn) {
+      window.alert(text.loginFirst);
+      switchOverlayPage('menuPage', 'loginPage');
+      return;
+    }
+    switchOverlayPage('menuPage', 'orderPage');
+  };
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="menuPage"&gt;
+      &lt;div className="overlay-shell wide"&gt;
+        &lt;h2&gt;{text.menu}&lt;/h2&gt;
+        &lt;div className="filter-row"&gt;
+          {['all', 'hot', 'cold', 'specialty'].map((key) =&gt; (
+            &lt;button
+              key={key}
+              type="button"
+              className={`filter-chip ${filter === key ? 'is-on' : ''}`}
+              onClick={() =&gt; setFilter(key)}
+            &gt;
+              {text[key]}
+            &lt;/button&gt;
+          ))}
+        &lt;/div&gt;
+        &lt;div className="menu-grid"&gt;
+          {drinks.map((drink) =&gt; {
+            const specs = pickList(drink.details?.specs, language);
+            const ingredients = pickList(drink.details?.ingredients, language);
+            const isOpen = openId === drink.id;
+            const soldOut = drink.available === false;
+            return (
+              &lt;article key={drink.id} className={`menu-card ${isOpen ? 'is-open' : ''} ${soldOut ? 'is-unavailable' : ''}`} style={{ '--bean': drink.accent }}&gt;
+                &lt;div className="menu-swatch" /&gt;
+                &lt;h3&gt;{drink.names[language] || drink.names.en}&lt;/h3&gt;
+                {soldOut &amp;&amp; &lt;p className="sold-out-tag"&gt;{text.soldOut}&lt;/p&gt;}
+                &lt;p&gt;{drink.blurb[language] || drink.blurb.en}&lt;/p&gt;
+                &lt;strong&gt;{formatPrice(drink.prices.m)} {text.toman}&lt;/strong&gt;
+                &lt;div className="menu-card-actions"&gt;
+                  &lt;button type="button" className="details-btn" onClick={() =&gt; setOpenId(isOpen ? '' : drink.id)}&gt;
+                    {isOpen ? text.closeDetails : text.detailsBtn}
+                  &lt;/button&gt;
+                  &lt;button type="button" className="primary-btn" onClick={() =&gt; orderDrink(drink)} disabled={soldOut}&gt;
+                    {soldOut ? text.soldOut : text.order}
+                  &lt;/button&gt;
+                &lt;/div&gt;
+                {isOpen &amp;&amp; (
+                  &lt;div className="drink-details"&gt;
+                    {specs.length &gt; 0 &amp;&amp; (
+                      &lt;&gt;
+                        &lt;h4&gt;{text.specs}&lt;/h4&gt;
+                        &lt;ul&gt;
+                          {specs.map((line) =&gt; &lt;li key={line}&gt;{line}&lt;/li&gt;)}
+                        &lt;/ul&gt;
+                      &lt;/&gt;
+                    )}
+                    {ingredients.length &gt; 0 &amp;&amp; (
+                      &lt;&gt;
+                        &lt;h4&gt;{text.ingredients}&lt;/h4&gt;
+                        &lt;ul&gt;
+                          {ingredients.map((line) =&gt; &lt;li key={line}&gt;{line}&lt;/li&gt;)}
+                        &lt;/ul&gt;
+                      &lt;/&gt;
+                    )}
+                  &lt;/div&gt;
+                )}
+              &lt;/article&gt;
+            );
+          })}
+        &lt;/div&gt;
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('menuPage')}&gt;{text.back}&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Order/OrderPage.jsx</h2>
+<pre><code>import React, { useMemo } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { closeOverlayPage, switchOverlayPage } from '../../utils/pageOverlay';
+
+function formatPrice(n) {
+  return n.toLocaleString('fa-IR');
+}
+
+export function OrderPage() {
+  const { language, cart, setCart, isLoggedIn, menu } = useApp();
+  const text = UI[language] || UI.fa;
+  const drinks = useMemo(
+    () =&gt; menu.filter((item) =&gt; !item.removed &amp;&amp; item.available !== false),
+    [menu]
+  );
+  const drink = drinks.find((item) =&gt; item.id === cart?.drinkId) || drinks[0];
+  const size = cart?.size || 'm';
+  const qty = Math.min(8, Math.max(1, cart?.qty || 1));
+  const total = drink ? (drink.prices[size] || drink.prices.m) * qty : 0;
+
+  const update = (patch) =&gt; {
+    if (!drink) return;
+    setCart({ drinkId: drink.id, size, qty, ...patch });
+  };
+
+  const goPay = () =&gt; {
+    if (!drink) return;
+    if (!isLoggedIn) {
+      window.alert(text.loginFirst);
+      switchOverlayPage('orderPage', 'loginPage');
+      return;
+    }
+    setCart({ drinkId: drink.id, size, qty, amount: total, name: drink.names[language] || drink.names.en });
+    switchOverlayPage('orderPage', 'paymentPage');
+  };
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="orderPage"&gt;
+      &lt;div className="overlay-shell"&gt;
+        &lt;h2&gt;{text.order}&lt;/h2&gt;
+        {!drink &amp;&amp; &lt;p className="hero-lead"&gt;{text.emptyCart}&lt;/p&gt;}
+        {drink &amp;&amp; (
+          &lt;form className="overlay-form" onSubmit={(e) =&gt; { e.preventDefault(); goPay(); }}&gt;
+            &lt;div className="field"&gt;
+              &lt;label htmlFor="drink-select"&gt;{text.pickDrink}&lt;/label&gt;
+              &lt;select id="drink-select" value={drink.id} onChange={(e) =&gt; update({ drinkId: e.target.value })}&gt;
+                {drinks.map((item) =&gt; (
+                  &lt;option key={item.id} value={item.id}&gt;{item.names[language] || item.names.en}&lt;/option&gt;
+                ))}
+              &lt;/select&gt;
+            &lt;/div&gt;
+            &lt;div className="size-row"&gt;
+              {['s', 'm', 'l'].map((key) =&gt; (
+                &lt;button
+                  key={key}
+                  type="button"
+                  className={`filter-chip ${size === key ? 'is-on' : ''}`}
+                  onClick={() =&gt; update({ size: key })}
+                &gt;
+                  {text[`size${key.toUpperCase()}`]} · {formatPrice(drink.prices[key])}
+                &lt;/button&gt;
+              ))}
+            &lt;/div&gt;
+            &lt;div className="field"&gt;
+              &lt;span className="qty-label"&gt;{text.qty}&lt;/span&gt;
+              &lt;div className="qty-row" role="group" aria-label={text.qty}&gt;
+                &lt;button
+                  type="button"
+                  className="qty-btn"
+                  onClick={() =&gt; update({ qty: Math.max(1, qty - 1) })}
+                  disabled={qty &lt;= 1}
+                  aria-label="-"
+                &gt;
+                  −
+                &lt;/button&gt;
+                &lt;span className="qty-value"&gt;{qty}&lt;/span&gt;
+                &lt;button
+                  type="button"
+                  className="qty-btn"
+                  onClick={() =&gt; update({ qty: Math.min(8, qty + 1) })}
+                  disabled={qty &gt;= 8}
+                  aria-label="+"
+                &gt;
+                  +
+                &lt;/button&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;p className="total-line"&gt;{text.total}: {formatPrice(total)} {text.toman}&lt;/p&gt;
+            &lt;button className="primary-btn" type="submit"&gt;{text.pay}&lt;/button&gt;
+          &lt;/form&gt;
+        )}
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('orderPage')}&gt;{text.back}&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Payment/PaymentPage.jsx</h2>
+<pre><code>import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { closeOverlayPage } from '../../utils/pageOverlay';
+
+function formatPrice(n) {
+  return (n || 0).toLocaleString('fa-IR');
+}
+
+export function PaymentPage() {
+  const { language, cart, placeOrder } = useApp();
+  const text = UI[language] || UI.fa;
+  const [message, setMessage] = useState('');
+
+  const handlePay = (e) =&gt; {
+    e.preventDefault();
+    if (!cart) {
+      setMessage(text.emptyCart);
+      return;
+    }
+    placeOrder({
+      drinkId: cart.drinkId,
+      name: cart.name,
+      size: cart.size,
+      qty: cart.qty,
+      amount: cart.amount
+    });
+    setMessage(text.paid);
+    window.setTimeout(() =&gt; closeOverlayPage('paymentPage'), 1000);
+  };
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="paymentPage"&gt;
+      &lt;div className="overlay-shell"&gt;
+        &lt;h2&gt;{text.pay}&lt;/h2&gt;
+        &lt;form className="overlay-form" onSubmit={handlePay}&gt;
+          &lt;p&gt;{cart?.name || text.emptyCart}&lt;/p&gt;
+          {cart &amp;&amp; (
+            &lt;p className="total-line"&gt;{text.total}: {formatPrice(cart.amount)} {text.toman}&lt;/p&gt;
+          )}
+          &lt;p className={`form-msg ${message ? 'ok' : ''}`}&gt;{message}&lt;/p&gt;
+          &lt;button className="primary-btn" type="submit" disabled={!cart}&gt;{text.confirmPay}&lt;/button&gt;
+        &lt;/form&gt;
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('paymentPage')}&gt;{text.back}&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/Seo/Seo.jsx</h2>
+<pre><code>import React, { useEffect } from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { SITE } from '../../data/site';
+import { siteUrl } from '../../utils/asset';
+
+function upsertMeta(selector, attrs) {
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement('meta');
+    document.head.appendChild(el);
+  }
+  Object.entries(attrs).forEach(([key, value]) =&gt; el.setAttribute(key, value));
+}
+
+function upsertLink(rel, href, extra = {}) {
+  const selector = extra.hreflang
+    ? `link[rel="${rel}"][hreflang="${extra.hreflang}"]`
+    : `link[rel="${rel}"]`;
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement('link');
+    el.setAttribute('rel', rel);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('href', href);
+  Object.entries(extra).forEach(([key, value]) =&gt; el.setAttribute(key, value));
+}
+
+export function Seo() {
+  const { language, menu, siteContent } = useApp();
+  const text = UI[language] || UI.fa;
+  const pageUrl = siteUrl();
+  const image = `${pageUrl}${SITE.image}`;
+  const brand = (siteContent?.brand || '').trim() || text.brand;
+  const address = (siteContent?.address || '').trim();
+  const phone = (siteContent?.phone || '').trim();
+  const hours = (siteContent?.hours || '').trim();
+
+  useEffect(() =&gt; {
+    document.title = text.seoTitle;
+    upsertMeta('meta[name="description"]', { name: 'description', content: text.seoDescription });
+    upsertMeta('meta[name="robots"]', { name: 'robots', content: 'index,follow,max-image-preview:large' });
+    upsertMeta('meta[name="author"]', { name: 'author', content: brand });
+    upsertMeta('meta[name="theme-color"]', { name: 'theme-color', content: '#6b4630' });
+    upsertMeta('meta[property="og:type"]', { property: 'og:type', content: 'website' });
+    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name', content: brand });
+    upsertMeta('meta[property="og:title"]', { property: 'og:title', content: text.seoTitle });
+    upsertMeta('meta[property="og:description"]', { property: 'og:description', content: text.seoDescription });
+    upsertMeta('meta[property="og:image"]', { property: 'og:image', content: image });
+    upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: language === 'fa' ? 'fa_IR' : language });
+    upsertMeta('meta[property="og:url"]', { property: 'og:url', content: pageUrl });
+    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
+    upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: text.seoTitle });
+    upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: text.seoDescription });
+    upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: image });
+    upsertLink('canonical', pageUrl);
+    ['fa', 'en', 'ar', 'zh', 'es'].forEach((lang) =&gt; {
+      upsertLink('alternate', `${pageUrl}?lang=${lang}`, { hreflang: lang });
+    });
+    upsertLink('alternate', pageUrl, { hreflang: 'x-default' });
+
+    const offers = (menu || []).slice(0, 12).map((item) =&gt; ({
+      '@type': 'MenuItem',
+      name: item.names[language] || item.names.fa,
+      description: item.blurb[language] || item.blurb.fa,
+      offers: {
+        '@type': 'Offer',
+        price: String(item.prices?.m || ''),
+        priceCurrency: 'IRR'
+      }
+    }));
+
+    const data = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'CafeOrCoffeeShop',
+          name: brand,
+          image,
+          url: pageUrl,
+          ...(phone ? { telephone: phone } : {}),
+          servesCuisine: 'Coffee',
+          ...(address ? {
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: address,
+              addressCountry: 'IR'
+            }
+          } : {}),
+          ...(siteContent?.mapLat &amp;&amp; siteContent?.mapLng ? {
+            geo: {
+              '@type': 'GeoCoordinates',
+              latitude: siteContent.mapLat,
+              longitude: siteContent.mapLng
+            }
+          } : {}),
+          ...(hours ? { openingHours: hours } : {}),
+          hasMenu: {
+            '@type': 'Menu',
+            hasMenuSection: {
+              '@type': 'MenuSection',
+              name: text.menu,
+              hasMenuItem: offers
+            }
+          }
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: (text.faqs || []).map((item) =&gt; ({
+            '@type': 'Question',
+            name: item.q,
+            acceptedAnswer: { '@type': 'Answer', text: item.a }
+          }))
+        }
+      ]
+    };
+
+    let script = document.getElementById('nova-jsonld');
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'nova-jsonld';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(data);
+  }, [address, brand, hours, image, language, menu, pageUrl, phone, siteContent, text]);
+
+  return (
+    &lt;a className="skip-link" href="#site-main"&gt;
+      {text.skipToContent}
+    &lt;/a&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/User/MyOrdersPage.jsx</h2>
+<pre><code>import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { UI } from '../../data/i18n';
+import { closeOverlayPage } from '../../utils/pageOverlay';
+
+function formatPrice(n) {
+  return (n || 0).toLocaleString('fa-IR');
+}
+
+export function MyOrdersPage() {
+  const { language, user, getUserOrders, cancelOrder } = useApp();
+  const text = UI[language] || UI.fa;
+  const list = getUserOrders(user?.username);
+
+  return (
+    &lt;section className="overlay-page ceramic-overlay" id="myOrdersPage"&gt;
+      &lt;div className="overlay-shell"&gt;
+        &lt;h2&gt;{text.myOrders}&lt;/h2&gt;
+        {!list.length &amp;&amp; &lt;p&gt;{text.noOrders}&lt;/p&gt;}
+        &lt;ul className="order-list"&gt;
+          {list.map((item) =&gt; (
+            &lt;li key={item.id} className="order-row"&gt;
+              &lt;div&gt;
+                &lt;strong&gt;{item.name}&lt;/strong&gt;
+                &lt;p&gt;{formatPrice(item.amount)} {text.toman} · {item.status === 'cancelled' ? text.cancelled : text.active}&lt;/p&gt;
+              &lt;/div&gt;
+              {item.status === 'active' &amp;&amp; (
+                &lt;button type="button" className="ghost-btn" onClick={() =&gt; cancelOrder(item.id)}&gt;
+                  {text.cancel}
+                &lt;/button&gt;
+              )}
+            &lt;/li&gt;
+          ))}
+        &lt;/ul&gt;
+        &lt;button type="button" className="back-home" onClick={() =&gt; closeOverlayPage('myOrdersPage')}&gt;{text.back}&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/UserPanel/ThemeSun.css</h2>
+<pre><code>.theme-sun {
+  --sun-size: 56px;
+  --core-size: 28px;
+  position: relative;
+  width: var(--sun-size);
+  height: var(--sun-size);
+  margin: 10px auto 2px;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.theme-sun-glow {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 230, 84, 0.5) 0%, rgba(255, 185, 6, 0.16) 50%, transparent 72%);
+  filter: blur(3px);
+  opacity: 0.75;
+  transition: opacity 0.35s ease;
+}
+
+.theme-sun-body {
+  position: absolute;
+  inset: 0;
+}
+
+.theme-sun-rings,
+.theme-sun-rings div,
+.theme-sun-rings div:before,
+.theme-sun-rings div:after,
+.theme-sun-core,
+.theme-sun-moon {
+  position: absolute;
+}
+
+.theme-sun-rings {
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.theme-sun-rings div {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.theme-sun-rings div:before,
+.theme-sun-rings div:after {
+  content: "";
+  z-index: 2;
+  top: 0;
+  left: 0;
+  height: inherit;
+  width: inherit;
+  background: inherit;
+}
+
+.theme-sun-rings div:before { transform: rotate(60deg); }
+.theme-sun-rings div:after { transform: rotate(-60deg); }
+
+.theme-sun-rings div:nth-child(even) { animation: themeSunRotateR 48s infinite linear; }
+.theme-sun-rings div:nth-child(odd) { animation: themeSunRotateL 52s infinite linear; }
+
+.theme-sun-rings div:nth-child(1) { animation-duration: 45s; background: rgba(255, 230, 84, 0.5); width: 38px; height: 38px; }
+.theme-sun-rings div:nth-child(2) { animation-duration: 49s; background: rgba(255, 185, 6, 0.5); width: 36px; height: 36px; }
+.theme-sun-rings div:nth-child(3) { animation-duration: 56s; background: rgba(255, 130, 5, 0.5); width: 34px; height: 34px; }
+.theme-sun-rings div:nth-child(4) { animation-duration: 93s; background: rgba(255, 90, 0, 0.5); width: 32px; height: 32px; }
+.theme-sun-rings div:nth-child(n + 5) { opacity: 0; visibility: hidden; }
+.theme-sun-rings div:nth-child(5) { animation-duration: 38s; background: rgba(255, 230, 84, 0.38); width: 42px; height: 42px; }
+.theme-sun-rings div:nth-child(6) { animation-duration: 42s; background: rgba(255, 160, 10, 0.34); width: 46px; height: 46px; }
+.theme-sun-rings div:nth-child(7) { animation-duration: 34s; background: rgba(255, 120, 0, 0.3); width: 50px; height: 50px; }
+.theme-sun-rings div:nth-child(8) { animation-duration: 28s; background: rgba(255, 90, 0, 0.26); width: 54px; height: 54px; }
+
+.theme-sun-core {
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: var(--core-size);
+  height: var(--core-size);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6b0 0%, #ffe654 38%, #ffb906 72%, #ff8205 100%);
+  box-shadow: 0 0 8px rgba(255, 185, 6, 0.4);
+  transition: opacity 0.4s ease, filter 0.4s ease, box-shadow 0.4s ease;
+}
+
+.theme-sun-moon {
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #ffffff 0%, #eef2f8 38%, #c9d2e0 100%);
+  box-shadow: inset -3px -2px 4px rgba(48, 56, 72, 0.35), 0 0 8px rgba(232, 238, 248, 0.65);
+  -webkit-mask-image: radial-gradient(circle at 30% 40%, transparent 46%, #000 49%);
+  mask-image: radial-gradient(circle at 30% 40%, transparent 46%, #000 49%);
+  transform: translate(-50%, -50%) translateX(40px);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.25s ease;
+}
+
+.theme-sun.is-gold .theme-sun-glow {
+  inset: 2px;
+  opacity: 1;
+  background: radial-gradient(circle, rgba(255, 230, 84, 0.8) 0%, rgba(255, 130, 5, 0.36) 46%, transparent 74%);
+}
+
+.theme-sun.is-gold .theme-sun-rings div:nth-child(n + 5) { opacity: 1; visibility: visible; }
+.theme-sun.is-gold .theme-sun-rings div:nth-child(even) { animation-duration: 16s; }
+.theme-sun.is-gold .theme-sun-rings div:nth-child(odd) { animation-duration: 18s; }
+.theme-sun.is-gold .theme-sun-core { box-shadow: 0 0 12px rgba(255, 160, 0, 0.8), 0 0 20px rgba(255, 230, 84, 0.4); }
+
+.theme-sun.is-dark .theme-sun-glow { opacity: 0; }
+.theme-sun.is-dark .theme-sun-core { box-shadow: none; opacity: 0.22; filter: brightness(0.55) saturate(0.35); }
+.theme-sun.is-dark .theme-sun-rings { opacity: 0.18; filter: brightness(0.5) saturate(0.3); }
+.theme-sun.is-dark .theme-sun-moon { opacity: 1; transform: translate(-50%, -50%); filter: none; }
+
+@keyframes themeSunRotateR {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes themeSunRotateL {
+  from { transform: translate(-50%, -50%) rotate(360deg); }
+  to { transform: translate(-50%, -50%) rotate(0deg); }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/UserPanel/ThemeSun.jsx</h2>
+<pre><code>import React from 'react';
+import './ThemeSun.css';
+
+export function ThemeSun({ theme = 'default' }) {
+  const mode = theme === 'gold' ? 'is-gold' : 'is-day';
+
+  return (
+    &lt;div className={`theme-sun ${mode}`} aria-hidden="true"&gt;
+      &lt;div className="theme-sun-glow" /&gt;
+      &lt;div className="theme-sun-body"&gt;
+        &lt;div className="theme-sun-rings"&gt;
+          &lt;div /&gt;&lt;div /&gt;&lt;div /&gt;&lt;div /&gt;&lt;div /&gt;&lt;div /&gt;&lt;div /&gt;&lt;div /&gt;
+        &lt;/div&gt;
+        &lt;div className="theme-sun-core" /&gt;
+        &lt;div className="theme-sun-moon" /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/components/UserPanel/UserPanel.jsx</h2>
+<pre><code>import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { ThemeSun } from './ThemeSun';
+import { UI, THEME_LABELS } from '../../data/i18n';
+import { openOverlayPage } from '../../utils/pageOverlay';
+
+export function UserPanel() {
+  const { user, logoutUser, language, theme, setLanguage, setTheme, isLoggedIn, isAdmin } = useApp();
+  const [isOpen, setIsOpen] = useState(false);
+  const text = UI[language] || UI.fa;
+
+  const languageOptions = [
+    { value: 'fa', label: 'فارسی' },
+    { value: 'en', label: 'English' },
+    { value: 'ar', label: 'العربية' },
+    { value: 'zh', label: '中文' },
+    { value: 'es', label: 'Español' }
+  ];
+
+  const themeOptions = Object.keys(THEME_LABELS).map((value) =&gt; ({
+    value,
+    label: THEME_LABELS[value][language] || THEME_LABELS[value].en
+  }));
+
+  const open = (id) =&gt; {
+    setIsOpen(false);
+    openOverlayPage(id);
+  };
+
+  return (
+    &lt;&gt;
+      &lt;div className={`panel-overlay ${isOpen ? 'open' : ''}`} onClick={() =&gt; setIsOpen(false)} /&gt;
+      &lt;button
+        type="button"
+        className={`user-panel-toggle ${isOpen ? 'open' : ''}`}
+        onClick={() =&gt; setIsOpen((value) =&gt; !value)}
+        aria-label={text.panel}
+        aria-expanded={isOpen}
+      &gt;
+        &lt;i className={`fas ${isOpen ? 'fa-times' : 'fa-ellipsis-vertical'}`} /&gt;
+      &lt;/button&gt;
+      &lt;aside className={`user-panel ${isOpen ? 'open' : ''}`}&gt;
+        &lt;h3 className="panel-title"&gt;{text.panel}&lt;/h3&gt;
+        {isLoggedIn &amp;&amp; (
+          &lt;p className="user-name-display"&gt;
+            &lt;strong&gt;{user.username}&lt;/strong&gt;
+            {isAdmin ? &lt;span className="admin-chip"&gt;{text.adminPanel}&lt;/span&gt; : null}
+          &lt;/p&gt;
+        )}
+        {!isLoggedIn &amp;&amp; (
+          &lt;&gt;
+            &lt;button className="panel-btn" onClick={() =&gt; open('loginPage')}&gt;
+              &lt;i className="fas fa-right-to-bracket" /&gt; {text.login}
+            &lt;/button&gt;
+            &lt;button className="panel-btn" onClick={() =&gt; open('signupPage')}&gt;
+              &lt;i className="fas fa-user-plus" /&gt; {text.signup}
+            &lt;/button&gt;
+          &lt;/&gt;
+        )}
+        {!isAdmin &amp;&amp; (
+          &lt;button className="panel-btn admin-entry" onClick={() =&gt; open('adminLoginPage')}&gt;
+            &lt;i className="fas fa-user-shield" /&gt; {text.adminLogin}
+          &lt;/button&gt;
+        )}
+        {isLoggedIn &amp;&amp; isAdmin &amp;&amp; (
+          &lt;button className="panel-btn" onClick={() =&gt; open('adminPage')}&gt;
+            &lt;i className="fas fa-sliders" /&gt; {text.adminPanel}
+          &lt;/button&gt;
+        )}
+        {isLoggedIn &amp;&amp; (
+          &lt;button className="panel-btn" onClick={() =&gt; open('myOrdersPage')}&gt;
+            &lt;i className="fas fa-mug-saucer" /&gt; {text.myOrders}
+          &lt;/button&gt;
+        )}
+        &lt;div className="panel-section"&gt;
+          &lt;label className="panel-label"&gt;{text.language}&lt;/label&gt;
+          &lt;select className="panel-select" value={language} onChange={(e) =&gt; setLanguage(e.target.value)}&gt;
+            {languageOptions.map((option) =&gt; (
+              &lt;option key={option.value} value={option.value}&gt;{option.label}&lt;/option&gt;
+            ))}
+          &lt;/select&gt;
+        &lt;/div&gt;
+        &lt;div className="panel-section"&gt;
+          &lt;label className="panel-label"&gt;{text.theme}&lt;/label&gt;
+          &lt;div className="theme-options"&gt;
+            {themeOptions.map((option) =&gt; (
+              &lt;button
+                key={option.value}
+                type="button"
+                className={`theme-swatch ${theme === option.value ? 'active' : ''}`}
+                onClick={() =&gt; setTheme(option.value)}
+                title={option.label}
+                data-theme-value={option.value}
+              &gt;
+                &lt;span className="swatch-dot" /&gt;
+              &lt;/button&gt;
+            ))}
+          &lt;/div&gt;
+          &lt;ThemeSun theme={theme} /&gt;
+        &lt;/div&gt;
+        {isLoggedIn &amp;&amp; (
+          &lt;button className="panel-btn" onClick={() =&gt; { logoutUser(); setIsOpen(false); }} style={{ color: '#8a5d5d' }}&gt;
+            &lt;i className="fas fa-sign-out-alt" /&gt; {text.logout}
+          &lt;/button&gt;
+        )}
+      &lt;/aside&gt;
+    &lt;/&gt;
+  );
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/context/AppContext.jsx</h2>
+<pre><code>import React, { createContext, useContext, useEffect, useState } from 'react';
+import { COFFEE_MENU, mergeMenu } from '../data/menu';
+import { EMPTY_SITE_CONTENT } from '../utils/siteContent';
+import { ADMIN, isAdminLogin, isAdminUser } from '../utils/admin';
+
+const AppContext = createContext();
+const THEME_VALUES = ['default', 'gold'];
+const LANGS = ['fa', 'en', 'ar', 'zh', 'es'];
+const STORE = {
+  prefs: 'novaCafePrefs',
+  user: 'novaCafeUser',
+  users: 'novaCafeUsers',
+  orders: 'novaCafeOrders',
+  menu: 'novaCafeMenu',
+  extras: 'novaCafeExtras'
+};
+
+function readStore(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStore(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+export function AppProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [language, setLanguage] = useState('fa');
+  const [theme, setThemeState] = useState('default');
+  const [orders, setOrders] = useState([]);
+  const [cart, setCart] = useState(null);
+  const [menu, setMenu] = useState(COFFEE_MENU);
+  const [menuPatches, setMenuPatches] = useState({});
+  const [siteContent, setSiteContent] = useState(EMPTY_SITE_CONTENT);
+  const [extraItems, setExtraItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() =&gt; {
+    const prefs = readStore(STORE.prefs, { language: 'fa', theme: 'default' });
+    const savedTheme = prefs.theme === 'dark' ? 'default' : prefs.theme;
+    const langParam = new URLSearchParams(window.location.search).get('lang');
+    const nextLang = LANGS.includes(langParam) ? langParam : (LANGS.includes(prefs.language) ? prefs.language : 'fa');
+    if (document.documentElement.getAttribute('data-theme') === 'dark') {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    setLanguage(nextLang);
+    setThemeState(THEME_VALUES.includes(savedTheme) ? savedTheme : 'default');
+    const savedUser = readStore(STORE.user, null);
+    setUser(savedUser);
+    const savedOrders = readStore(STORE.orders, []);
+    setOrders(Array.isArray(savedOrders) ? savedOrders : []);
+    const patches = readStore(STORE.menu, {});
+    setMenuPatches(patches &amp;&amp; typeof patches === 'object' ? patches : {});
+    const extras = readStore(STORE.extras, []);
+    const safeExtras = (Array.isArray(extras) ? extras : [])
+      .filter((item) =&gt; item &amp;&amp; item.id &amp;&amp; item.names)
+      .map((item) =&gt; ({ ...item, custom: true }));
+    setExtraItems(safeExtras);
+    setMenu(mergeMenu(COFFEE_MENU, patches &amp;&amp; typeof patches === 'object' ? patches : {}, safeExtras));
+    const savedSite = readStore(STORE.site, EMPTY_SITE_CONTENT);
+    setSiteContent({ ...EMPTY_SITE_CONTENT, ...(savedSite &amp;&amp; typeof savedSite === 'object' ? savedSite : {}) });
+    if (prefs.theme === 'dark') {
+      writeStore(STORE.prefs, { language: LANGS.includes(prefs.language) ? prefs.language : 'fa', theme: 'default' });
+    }
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() =&gt; {
+    if (theme === 'default') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'fa' || language === 'ar' ? 'rtl' : 'ltr';
+  }, [theme, language]);
+
+  const setLanguageSafe = (next) =&gt; {
+    const language = LANGS.includes(next) ? next : 'fa';
+    setLanguage(language);
+    writeStore(STORE.prefs, { language, theme });
+  };
+
+  const setTheme = (next) =&gt; {
+    const safe = THEME_VALUES.includes(next) ? next : 'default';
+    setThemeState(safe);
+    writeStore(STORE.prefs, { language, theme: safe });
+  };
+
+  const signupUser = ({ username, password }) =&gt; {
+    if (username.trim().toLowerCase() === ADMIN.username) {
+      throw new Error('exists');
+    }
+    const users = readStore(STORE.users, []);
+    if (users.some((item) =&gt; item.username === username)) {
+      throw new Error('exists');
+    }
+    const record = { username, password };
+    writeStore(STORE.users, [...users, record]);
+    setUser(record);
+    writeStore(STORE.user, record);
+  };
+
+  const loginUser = (userData) =&gt; {
+    setUser(userData);
+    writeStore(STORE.user, userData);
+  };
+
+  const logoutUser = () =&gt; {
+    setUser(null);
+    localStorage.removeItem(STORE.user);
+    setCart(null);
+  };
+
+  const findSavedUser = () =&gt; readStore(STORE.user, null);
+
+  const findAccount = (username, password) =&gt; {
+    if (isAdminLogin(username, password)) {
+      return { username: ADMIN.username, role: 'admin' };
+    }
+    const users = readStore(STORE.users, []);
+    return users.find((item) =&gt; item.username === username &amp;&amp; item.password === password) || null;
+  };
+
+  const saveMenuPatches = (nextPatches, extras = extraItems) =&gt; {
+    setMenuPatches(nextPatches);
+    setMenu(mergeMenu(COFFEE_MENU, nextPatches, extras));
+    writeStore(STORE.menu, nextPatches);
+  };
+
+  const saveExtras = (nextExtras, patches = menuPatches) =&gt; {
+    setExtraItems(nextExtras);
+    setMenu(mergeMenu(COFFEE_MENU, patches, nextExtras));
+    writeStore(STORE.extras, nextExtras);
+  };
+
+  const updateSiteContent = (patch) =&gt; {
+    if (!isAdminUser(user)) return;
+    setSiteContent((prev) =&gt; {
+      const next = { ...EMPTY_SITE_CONTENT, ...prev, ...patch };
+      writeStore(STORE.site, next);
+      return next;
+    });
+  };
+
+  const updateMenuItem = (id, patch) =&gt; {
+    if (!isAdminUser(user)) return;
+    const next = {
+      ...menuPatches,
+      [id]: {
+        ...(menuPatches[id] || {}),
+        ...patch,
+        names: { ...(menuPatches[id]?.names || {}), ...(patch.names || {}) },
+        prices: { ...(menuPatches[id]?.prices || {}), ...(patch.prices || {}) },
+        blurb: { ...(menuPatches[id]?.blurb || {}), ...(patch.blurb || {}) },
+        details: {
+          specs: { ...(menuPatches[id]?.details?.specs || {}), ...(patch.details?.specs || {}) },
+          ingredients: { ...(menuPatches[id]?.details?.ingredients || {}), ...(patch.details?.ingredients || {}) }
+        }
+      }
+    };
+    saveMenuPatches(next);
+  };
+
+  const addMenuItem = ({ name, category, prices, blurb }) =&gt; {
+    if (!isAdminUser(user)) return null;
+    const label = String(name || '').trim();
+    if (!label) return null;
+    const id = `custom-${Date.now()}`;
+    const item = {
+      id,
+      custom: true,
+      available: true,
+      removed: false,
+      category: ['hot', 'cold', 'specialty'].includes(category) ? category : 'specialty',
+      accent: '#6b4630',
+      prices: {
+        s: Number(prices?.s) || 0,
+        m: Number(prices?.m) || 0,
+        l: Number(prices?.l) || 0
+      },
+      names: { fa: label, en: label, ar: label, zh: label, es: label },
+      blurb: { fa: blurb || '', en: blurb || '', ar: blurb || '', zh: blurb || '', es: blurb || '' },
+      details: {
+        specs: { fa: [], en: [], ar: [], zh: [], es: [] },
+        ingredients: { fa: [], en: [], ar: [], zh: [], es: [] }
+      }
+    };
+    saveExtras([...extraItems, item]);
+    return id;
+  };
+
+  const removeMenuItem = (id) =&gt; {
+    if (!isAdminUser(user)) return;
+    if (String(id).startsWith('custom-')) {
+      const nextExtras = extraItems.filter((item) =&gt; item.id !== id);
+      const nextPatches = { ...menuPatches };
+      delete nextPatches[id];
+      saveExtras(nextExtras, nextPatches);
+      writeStore(STORE.menu, nextPatches);
+      setMenuPatches(nextPatches);
+      return;
+    }
+    updateMenuItem(id, { removed: true });
+  };
+
+  const restoreMenuItem = (id) =&gt; {
+    if (!isAdminUser(user)) return;
+    updateMenuItem(id, { removed: false });
+  };
+
+  const placeOrder = (payload) =&gt; {
+    const record = {
+      id: `${Date.now()}`,
+      username: user?.username || 'guest',
+      status: 'active',
+      createdAt: Date.now(),
+      ...payload
+    };
+    setOrders((prev) =&gt; {
+      const next = [record, ...prev];
+      writeStore(STORE.orders, next);
+      return next;
+    });
+    setCart(null);
+    return record;
+  };
+
+  const cancelOrder = (id) =&gt; {
+    setOrders((prev) =&gt; {
+      const next = prev.map((item) =&gt; (item.id === id ? { ...item, status: 'cancelled' } : item));
+      writeStore(STORE.orders, next);
+      return next;
+    });
+  };
+
+  const getUserOrders = (username) =&gt; orders.filter((item) =&gt; item.username === username);
+
+  const isLoggedIn = Boolean(user);
+  const isAdmin = isAdminUser(user);
+
+  return (
+    &lt;AppContext.Provider
+      value={{
+        user,
+        language,
+        theme,
+        orders,
+        cart,
+        setCart,
+        menu,
+        siteContent,
+        isLoading,
+        isLoggedIn,
+        isAdmin,
+        setLanguage: setLanguageSafe,
+        setTheme,
+        signupUser,
+        loginUser,
+        logoutUser,
+        findSavedUser,
+        findAccount,
+        updateMenuItem,
+        addMenuItem,
+        removeMenuItem,
+        restoreMenuItem,
+        updateSiteContent,
+        placeOrder,
+        cancelOrder,
+        getUserOrders
+      }}
+    &gt;
+      {children}
+    &lt;/AppContext.Provider&gt;
+  );
+}
+
+export function useApp() {
+  return useContext(AppContext);
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/data/i18n.js</h2>
+<pre><code>export const UI = {
+  fa: {
+    brand: 'کافه نوا',
+    title: 'منوی قهوه، سفارش سریع و فضایی آرام',
+    text: 'اسپرسو، لاته، کلد برو و نوشیدنی‌های خاص را در چند کلیک انتخاب کنید.',
+    signup: 'ثبت‌نام',
+    login: 'ورود',
+    menu: 'منوی قهوه',
+    order: 'سفارش',
+    myOrders: 'سفارش‌های من',
+    contact: 'ارتباط با ما',
+    loginFirst: 'لطفاً ابتدا وارد حساب کاربری خود شوید.',
+    loginDetail: 'ورود سریع برای دیدن سفارش‌های ذخیره‌شده.',
+    menuDetail: 'اسپرسو، نوشیدنی‌های شیری و سرد.',
+    orderDetail: 'انتخاب قهوه، سایز و پرداخت در چند مرحله.',
+    myOrdersDetail: 'سابقه سفارش همین حساب.',
+    contactDetail: 'میز، زمان یا سؤال درباره منو را بپرسید.',
+    featureHeading: 'چرا کافه نوا؟',
+    cards: [
+      { title: 'دان تازه', text: 'رست هفتگی و دم‌آوری دقیق برای هر فنجان.' },
+      { title: 'منوی متنوع', text: 'از اسپرسو کلاسیک تا کلد برو و قهوه ترک.' },
+      { title: 'سفارش آنلاین', text: 'قبل از رسیدن، نوشیدنی را رزرو و پرداخت کنید.' },
+      { title: 'فضای آرام', text: 'میز، نور ملایم و تجربه‌ای بدون شتاب.' }
+    ],
+    stepsTitle: 'مسیر سفارش',
+    steps: [
+      { num: '۱', title: 'منو را ببینید', text: 'دسته‌ها و قیمت هر سایز شفاف است.' },
+      { num: '۲', title: 'فنجان را قفل کنید', text: 'قهوه و سایز را به نام شما ثبت می‌کنیم.' },
+      { num: '۳', title: 'پرداخت کنید', text: 'مبلغ قبل از تأیید مشخص است.' },
+      { num: '۴', title: 'بنوشید', text: 'در کافه یا بیرون‌بر، فنجان آماده‌ است.' }
+    ],
+    cta: 'شروع سفارش',
+    hot: 'گرم',
+    cold: 'سرد',
+    specialty: 'تخصصی',
+    all: 'همه',
+    sizeS: 'کوچک',
+    sizeM: 'متوسط',
+    sizeL: 'بزرگ',
+    toman: 'تومان',
+    add: 'افزودن به سفارش',
+    pay: 'پرداخت',
+    back: 'بازگشت',
+    panel: 'پنل کاربری',
+    language: 'زبان',
+    theme: 'تم',
+    logout: 'خروج',
+    username: 'نام کاربری',
+    password: 'رمز عبور',
+    submitLogin: 'ورود',
+    submitSignup: 'ثبت‌نام',
+    loginLead: 'ورود به کافه نوا',
+    signupLead: 'ساخت حساب برای سفارش قهوه',
+    noUser: 'ابتدا باید ثبت‌نام کنید.',
+    wrong: 'نام کاربری یا رمز عبور اشتباه است.',
+    successLogin: 'ورود با موفقیت انجام شد.',
+    successSignup: 'ثبت‌نام انجام شد.',
+    exists: 'این نام کاربری قبلاً ثبت شده است.',
+    emptyCart: 'هنوز قهوه‌ای انتخاب نشده.',
+    total: 'جمع',
+    confirmPay: 'تأیید و پرداخت',
+    paid: 'پرداخت ثبت شد.',
+    cancel: 'لغو',
+    active: 'فعال',
+    cancelled: 'لغو شده',
+    noOrders: 'سفارشی ثبت نشده است.',
+    contactTitle: 'ارتباط با کافه',
+    contactPhone: 'تلفن',
+    contactAddress: 'آدرس',
+    send: 'ارسال پیام',
+    name: 'نام',
+    message: 'پیام',
+    sent: 'پیام ارسال شد.',
+    termsKicker: 'قوانین استفاده',
+    termsTitle: 'قوانین و مقررات کافه',
+    footerCopy: 'استفاده از سامانه به معنای پذیرش قوانین است.',
+    termsBtn: 'قوانین',
+    qty: 'تعداد',
+    pickDrink: 'یک نوشیدنی انتخاب کنید',
+    intro: 'در حال دم‌آوری',
+    detailsBtn: 'توضیحات',
+    ingredients: 'مواد داخل نوشیدنی',
+    specs: 'مشخصات',
+    adminPanel: 'پنل ادمین',
+    adminTitle: 'مدیریت سایت',
+    adminLead: 'قیمت، متن سایت، آدرس، نقشه و مواد هر قهوه را از اینجا عوض کنید.',
+    saveChanges: 'ذخیره تغییرات',
+    savedOk: 'تغییرات ذخیره شد.',
+    closeDetails: 'بستن',
+    seoTitle: 'کافه نوا',
+    seoDescription: 'کافه نوا: اسپرسو، لاته، کلد برو و سفارش آنلاین. دان تازه و دم‌آوری دقیق.',
+    skipToContent: 'رفتن به محتوا',
+    hoursTitle: 'ساعت کاری',
+    copyright: '۱۴۰۵ کافه نوا. همه حقوق محفوظ است.',
+    faqHeading: 'سؤال‌های پرتکرار',
+    faqs: [
+      { q: 'چطور سفارش بدهم؟', a: 'از منو نوشیدنی را انتخاب کنید، وارد حساب شوید و پرداخت را تمام کنید.' },
+      { q: 'بیرون‌بر دارید؟', a: 'بله، سفارش را می‌توانید در کافه بنوشید یا بیرون‌بر بگیرید.' },
+      { q: 'ساعت کار کجاست؟', a: 'ساعت کاری و آدرس وقتی توسط کافه ثبت شود در همین سایت دیده می‌شود.' }
+    ],
+    visitUs: 'به ما سر بزنید',
+    siteSettings: 'تنظیمات سایت',
+    pageTitle: 'عنوان صفحه',
+    pageText: 'متن معرفی',
+    mapLat: 'عرض جغرافیایی',
+    mapLng: 'طول جغرافیایی',
+    registerMap: 'ثبت در نقشه',
+    mapHeading: 'نقشه',
+    placeEmpty: 'آدرس و راه‌های تماس هنوز ثبت نشده است.',
+    mapHint: 'آدرس یا مختصات را بنویسید و ثبت در نقشه را بزنید تا برای همه دیده شود.',
+    hideMap: 'حذف از نقشه',
+    mapNeedPlace: 'اول آدرس یا عرض و طول جغرافیایی را بنویسید.',
+    adminLogin: 'ورود ادمین',
+    adminLoginLead: 'ورود ویژه مدیریت کافه',
+    addItem: 'افزودن نوشیدنی',
+    itemName: 'نام نوشیدنی',
+    itemCategory: 'دسته',
+    deleteItem: 'حذف گزینه',
+    itemNeedName: 'نام نوشیدنی را بنویسید.',
+    soldOut: 'موجود نیست',
+    markUnavailable: 'ثبت ناموجود',
+    markAvailable: 'موجود است',
+    restoreItem: 'بازگردانی'
+  },
+  en: {
+    brand: 'Nova Café',
+    title: 'A coffee menu, fast orders, and a calm room',
+    text: 'Pick espresso, latte, cold brew and house drinks in a few clicks.',
+    signup: 'Sign up',
+    login: 'Login',
+    menu: 'Coffee menu',
+    order: 'Order',
+    myOrders: 'My orders',
+    contact: 'Contact us',
+    loginFirst: 'Please log in first.',
+    loginDetail: 'Sign in to see saved orders.',
+    menuDetail: 'Espresso, milk drinks, iced cups and house specials.',
+    orderDetail: 'Choose a coffee, a size, then pay in a few steps.',
+    myOrdersDetail: 'Order history for this account.',
+    contactDetail: 'Ask about a table, timing, or the menu.',
+    featureHeading: 'Why Nova Café?',
+    cards: [
+      { title: 'Fresh beans', text: 'Weekly roast and a careful brew in every cup.' },
+      { title: 'A full menu', text: 'From classic espresso to cold brew and Turkish coffee.' },
+      { title: 'Order ahead', text: 'Reserve and pay before you arrive.' },
+      { title: 'A quiet room', text: 'Tables, soft light, and no rush.' }
+    ],
+    stepsTitle: 'How to order',
+    steps: [
+      { num: '1', title: 'Read the menu', text: 'Categories and sizes are priced clearly.' },
+      { num: '2', title: 'Lock a cup', text: 'We hold the drink and size in your name.' },
+      { num: '3', title: 'Pay', text: 'The total is shown before you confirm.' },
+      { num: '4', title: 'Drink', text: 'In the café or to go, the cup is ready.' }
+    ],
+    cta: 'Start an order',
+    hot: 'Hot',
+    cold: 'Iced',
+    specialty: 'House',
+    all: 'All',
+    sizeS: 'Small',
+    sizeM: 'Medium',
+    sizeL: 'Large',
+    toman: 'Toman',
+    add: 'Add to order',
+    pay: 'Pay',
+    back: 'Back',
+    panel: 'User panel',
+    language: 'Language',
+    theme: 'Theme',
+    logout: 'Logout',
+    username: 'Username',
+    password: 'Password',
+    submitLogin: 'Log in',
+    submitSignup: 'Sign up',
+    loginLead: 'Sign in to Nova Café',
+    signupLead: 'Create an account to order coffee',
+    noUser: 'You must sign up first.',
+    wrong: 'Incorrect username or password.',
+    successLogin: 'Login successful.',
+    successSignup: 'Account created.',
+    exists: 'This username is already taken.',
+    emptyCart: 'No coffee selected yet.',
+    total: 'Total',
+    confirmPay: 'Confirm and pay',
+    paid: 'Payment recorded.',
+    cancel: 'Cancel',
+    active: 'Active',
+    cancelled: 'Cancelled',
+    noOrders: 'No orders yet.',
+    contactTitle: 'Contact the café',
+    contactPhone: 'Phone',
+    contactAddress: 'Address',
+    send: 'Send message',
+    name: 'Name',
+    message: 'Message',
+    sent: 'Message sent.',
+    termsKicker: 'Terms of use',
+    termsTitle: 'Café terms and conditions',
+    footerCopy: 'Using the platform means you accept the terms.',
+    termsBtn: 'Terms',
+    qty: 'Qty',
+    pickDrink: 'Choose a drink',
+    intro: 'Brewing',
+    detailsBtn: 'Details',
+    ingredients: 'Ingredients',
+    specs: 'Specs',
+    adminPanel: 'Admin panel',
+    adminTitle: 'Site editor',
+    adminLead: 'Change prices, site text, address, map and ingredients from here.',
+    saveChanges: 'Save changes',
+    savedOk: 'Changes saved.',
+    closeDetails: 'Close',
+    seoTitle: 'Nova Café',
+    seoDescription: 'Nova Café: espresso, latte, cold brew and online orders.',
+    skipToContent: 'Skip to content',
+    hoursTitle: 'Hours',
+    copyright: '2026 Nova Café. All rights reserved.',
+    faqHeading: 'Common questions',
+    faqs: [
+      { q: 'How do I order?', a: 'Pick a drink from the menu, sign in, and finish payment.' },
+      { q: 'Is takeaway available?', a: 'Yes — drink in or take the cup with you.' },
+      { q: 'When are you open?', a: 'Hours and address appear here once the café publishes them.' }
+    ],
+    visitUs: 'Visit us',
+    siteSettings: 'Site settings',
+    pageTitle: 'Page title',
+    pageText: 'Intro text',
+    mapLat: 'Latitude',
+    mapLng: 'Longitude',
+    registerMap: 'Save on map',
+    mapHeading: 'Map',
+    placeEmpty: 'Address and contact details have not been published yet.',
+    mapHint: 'Enter an address or coordinates, then save on the map so everyone can see it.',
+    hideMap: 'Remove from map',
+    mapNeedPlace: 'Add an address or latitude and longitude first.',
+    adminLogin: 'Admin login',
+    adminLoginLead: 'Café management sign-in',
+    addItem: 'Add a drink',
+    itemName: 'Drink name',
+    itemCategory: 'Category',
+    deleteItem: 'Remove item',
+    itemNeedName: 'Enter a drink name first.',
+    soldOut: 'Sold out',
+    markUnavailable: 'Mark unavailable',
+    markAvailable: 'Mark available',
+    restoreItem: 'Restore'
+  },
+  ar: {
+    brand: 'نوفا كافيه',
+    title: 'قائمة قهوة، طلب سريع ومكان هادئ',
+    text: 'اختر الإسبريسو واللاتيه والكولد برو ببضع نقرات.',
+    signup: 'إنشاء حساب',
+    login: 'تسجيل الدخول',
+    menu: 'قائمة القهوة',
+    order: 'طلب',
+    myOrders: 'طلباتي',
+    contact: 'تواصل معنا',
+    loginFirst: 'يرجى تسجيل الدخول أولاً.',
+    loginDetail: 'سجّل الدخول لرؤية الطلبات المحفوظة.',
+    menuDetail: 'إسبريسو ومشروبات الحليب والباردة والاختصاص.',
+    orderDetail: 'اختر القهوة والحجم ثم ادفع.',
+    myOrdersDetail: 'سجل طلبات هذا الحساب.',
+    contactDetail: 'اسأل عن طاولة أو الوقت أو القائمة.',
+    featureHeading: 'لماذا نوفا كافيه؟',
+    cards: [
+      { title: 'حبوب طازجة', text: 'تحميص أسبوعي وتحضير دقيق لكل فنجان.' },
+      { title: 'قائمة كاملة', text: 'من الإسبريسو الكلاسيكي إلى التركي والكولد برو.' },
+      { title: 'اطلب مسبقاً', text: 'احجز وادفع قبل الوصول.' },
+      { title: 'مكان هادئ', text: 'طاولات وضوء ناعم بلا عجلة.' }
+    ],
+    stepsTitle: 'مسار الطلب',
+    steps: [
+      { num: '١', title: 'اقرأ القائمة', text: 'التصنيفات والأسعار واضحة.' },
+      { num: '٢', title: 'اقفل الفنجان', text: 'نسجّل المشروب والحجم باسمك.' },
+      { num: '٣', title: 'ادفع', text: 'المبلغ ظاهر قبل التأكيد.' },
+      { num: '٤', title: 'اشرب', text: 'في المقهى أو للخارج، الفنجان جاهز.' }
+    ],
+    cta: 'ابدأ الطلب',
+    hot: 'ساخن',
+    cold: 'بارد',
+    specialty: 'اختصاص',
+    all: 'الكل',
+    sizeS: 'صغير',
+    sizeM: 'وسط',
+    sizeL: 'كبير',
+    toman: 'تومان',
+    add: 'أضف للطلب',
+    pay: 'دفع',
+    back: 'رجوع',
+    panel: 'لوحة المستخدم',
+    language: 'اللغة',
+    theme: 'السمة',
+    logout: 'خروج',
+    username: 'اسم المستخدم',
+    password: 'كلمة المرور',
+    submitLogin: 'دخول',
+    submitSignup: 'إنشاء حساب',
+    loginLead: 'دخول نوفا كافيه',
+    signupLead: 'أنشئ حساباً لطلب القهوة',
+    noUser: 'يجب إنشاء حساب أولاً.',
+    wrong: 'اسم المستخدم أو كلمة المرور غير صحيحة.',
+    successLogin: 'تم الدخول بنجاح.',
+    successSignup: 'تم إنشاء الحساب.',
+    exists: 'اسم المستخدم مستخدم مسبقاً.',
+    emptyCart: 'لم يُختر مشروب بعد.',
+    total: 'المجموع',
+    confirmPay: 'تأكيد ودفع',
+    paid: 'تم تسجيل الدفع.',
+    cancel: 'إلغاء',
+    active: 'نشط',
+    cancelled: 'ملغى',
+    noOrders: 'لا توجد طلبات.',
+    contactTitle: 'تواصل مع المقهى',
+    contactPhone: 'هاتف',
+    contactAddress: 'العنوان',
+    send: 'إرسال',
+    name: 'الاسم',
+    message: 'الرسالة',
+    sent: 'تم الإرسال.',
+    termsKicker: 'شروط الاستخدام',
+    termsTitle: 'قوانين المقهى',
+    footerCopy: 'استخدام المنصة يعني قبول القوانين.',
+    termsBtn: 'القوانين',
+    qty: 'الكمية',
+    pickDrink: 'اختر مشروباً',
+    intro: 'يُحضَّر',
+    detailsBtn: 'التفاصيل',
+    ingredients: 'المكونات',
+    specs: 'المواصفات',
+    adminPanel: 'لوحة الإدارة',
+    adminTitle: 'إدارة الموقع',
+    adminLead: 'غيّر الأسعار ونص الموقع والعنوان والخريطة ومكونات كل قهوة.',
+    saveChanges: 'حفظ التغييرات',
+    savedOk: 'تم الحفظ.',
+    closeDetails: 'إغلاق',
+    seoTitle: 'نوفا كافيه',
+    seoDescription: 'نوفا كافيه: إسبريسو ولاتيه وكولد برو وطلب عبر الإنترنت.',
+    skipToContent: 'تخطي إلى المحتوى',
+    hoursTitle: 'ساعات العمل',
+    copyright: '١٤٠٥ نوفا كافيه. جميع الحقوق محفوظة.',
+    faqHeading: 'أسئلة شائعة',
+    faqs: [
+      { q: 'كيف أطلب؟', a: 'اختر المشروب من القائمة، سجّل الدخول وأكمل الدفع.' },
+      { q: 'هل يتوفر سفري؟', a: 'نعم، يمكنك الشرب في المقهى أو أخذ الطلب.' },
+      { q: 'متى تفتحون؟', a: 'ساعات العمل والعنوان يظهران هنا بعد أن يسجّلهما المقهى.' }
+    ],
+    visitUs: 'زورونا',
+    siteSettings: 'إعدادات الموقع',
+    pageTitle: 'عنوان الصفحة',
+    pageText: 'نص التعريف',
+    mapLat: 'خط العرض',
+    mapLng: 'خط الطول',
+    registerMap: 'حفظ على الخريطة',
+    mapHeading: 'الخريطة',
+    placeEmpty: 'لم يُنشر العنوان وبيانات التواصل بعد.',
+    mapHint: 'اكتب العنوان أو الإحداثيات ثم احفظ على الخريطة ليراه الجميع.',
+    hideMap: 'إزالة من الخريطة',
+    mapNeedPlace: 'أضف عنواناً أو خط العرض والطول أولاً.',
+    adminLogin: 'دخول الإدارة',
+    adminLoginLead: 'دخول خاص بإدارة المقهى',
+    addItem: 'إضافة مشروب',
+    itemName: 'اسم المشروب',
+    itemCategory: 'التصنيف',
+    deleteItem: 'حذف الخيار',
+    itemNeedName: 'اكتب اسم المشروب أولاً.',
+    soldOut: 'غير متوفر',
+    markUnavailable: 'تسجيل غير متوفر',
+    markAvailable: 'متوفر',
+    restoreItem: 'استعادة'
+  },
+  zh: {
+    brand: 'Nova 咖啡馆',
+    title: '咖啡菜单、快速下单、安静空间',
+    text: '几步即可选择浓缩、拿铁、冷萃与特调。',
+    signup: '注册',
+    login: '登录',
+    menu: '咖啡菜单',
+    order: '下单',
+    myOrders: '我的订单',
+    contact: '联系我们',
+    loginFirst: '请先登录。',
+    loginDetail: '登录后查看已保存订单。',
+    menuDetail: '浓缩、奶咖、冰饮与店内特调。',
+    orderDetail: '选择咖啡与规格后支付。',
+    myOrdersDetail: '本账户的订单记录。',
+    contactDetail: '询问座位、时间或菜单。',
+    featureHeading: '为何选择 Nova？',
+    cards: [
+      { title: '新鲜咖啡豆', text: '每周烘焙，每一杯认真萃取。' },
+      { title: '完整菜单', text: '从经典浓缩到冷萃与土耳其咖啡。' },
+      { title: '提前下单', text: '到店前即可预订并支付。' },
+      { title: '安静空间', text: '座位、柔光、不催促。' }
+    ],
+    stepsTitle: '点单流程',
+    steps: [
+      { num: '1', title: '看菜单', text: '分类与规格价格清晰。' },
+      { num: '2', title: '锁定一杯', text: '按您的名字记下饮品与规格。' },
+      { num: '3', title: '支付', text: '确认前显示总额。' },
+      { num: '4', title: '享用', text: '堂食或外带，杯子已备好。' }
+    ],
+    cta: '开始点单',
+    hot: '热饮',
+    cold: '冰饮',
+    specialty: '特调',
+    all: '全部',
+    sizeS: '小',
+    sizeM: '中',
+    sizeL: '大',
+    toman: '托曼',
+    add: '加入订单',
+    pay: '支付',
+    back: '返回',
+    panel: '用户面板',
+    language: '语言',
+    theme: '主题',
+    logout: '退出',
+    username: '用户名',
+    password: '密码',
+    submitLogin: '登录',
+    submitSignup: '注册',
+    loginLead: '登录 Nova Café',
+    signupLead: '注册账户以便点咖啡',
+    noUser: '请先注册。',
+    wrong: '用户名或密码不正确。',
+    successLogin: '登录成功。',
+    successSignup: '注册成功。',
+    exists: '该用户名已被使用。',
+    emptyCart: '尚未选择咖啡。',
+    total: '合计',
+    confirmPay: '确认并支付',
+    paid: '已记录付款。',
+    cancel: '取消',
+    active: '进行中',
+    cancelled: '已取消',
+    noOrders: '暂无订单。',
+    contactTitle: '联系咖啡馆',
+    contactPhone: '电话',
+    contactAddress: '地址',
+    send: '发送',
+    name: '姓名',
+    message: '留言',
+    sent: '已发送。',
+    termsKicker: '使用条款',
+    termsTitle: '咖啡馆条款',
+    footerCopy: '使用本平台即表示接受条款。',
+    termsBtn: '条款',
+    qty: '数量',
+    pickDrink: '选择饮品',
+    intro: '冲煮中',
+    detailsBtn: '详情',
+    ingredients: '配料',
+    specs: '规格',
+    adminPanel: '管理面板',
+    adminTitle: '网站管理',
+    adminLead: '在这里修改价格、网站文案、地址、地图和每款咖啡的配料。',
+    saveChanges: '保存更改',
+    savedOk: '已保存。',
+    closeDetails: '关闭',
+    seoTitle: 'Nova Café',
+    seoDescription: 'Nova Café：浓缩、拿铁、冷萃与在线点单。',
+    skipToContent: '跳到正文',
+    hoursTitle: '营业时间',
+    copyright: '2026 Nova Café 版权所有。',
+    faqHeading: '常见问题',
+    faqs: [
+      { q: '如何点单？', a: '在菜单中选择饮品，登录并完成支付。' },
+      { q: '可以外带吗？', a: '可以，店内饮用或外带均可。' },
+      { q: '营业到几点？', a: '营业时间和地址会在咖啡店登记后显示。' }
+    ],
+    visitUs: '来店坐坐',
+    siteSettings: '网站设置',
+    pageTitle: '页面标题',
+    pageText: '介绍文字',
+    mapLat: '纬度',
+    mapLng: '经度',
+    registerMap: '登记到地图',
+    mapHeading: '地图',
+    placeEmpty: '地址和联系方式尚未公布。',
+    mapHint: '填写地址或坐标，再点登记到地图，所有人就能看到。',
+    hideMap: '从地图移除',
+    mapNeedPlace: '请先填写地址或经纬度。',
+    adminLogin: '管理员登录',
+    adminLoginLead: '咖啡馆管理入口',
+    addItem: '添加饮品',
+    itemName: '饮品名称',
+    itemCategory: '分类',
+    deleteItem: '删除选项',
+    itemNeedName: '请先填写饮品名称。',
+    soldOut: '暂无',
+    markUnavailable: '标为售罄',
+    markAvailable: '标为有货',
+    restoreItem: '恢复'
+  },
+  es: {
+    brand: 'Nova Café',
+    title: 'Carta de café, pedido rápido y un espacio calmo',
+    text: 'Elige espresso, latte, cold brew y especiales en unos clics.',
+    signup: 'Registrarse',
+    login: 'Entrar',
+    menu: 'Carta de café',
+    order: 'Pedir',
+    myOrders: 'Mis pedidos',
+    contact: 'Contacto',
+    loginFirst: 'Inicia sesión primero.',
+    loginDetail: 'Entra para ver pedidos guardados.',
+    menuDetail: 'Espresso, lácteos, fríos y especiales de la casa.',
+    orderDetail: 'Elige café, tamaño y paga en pocos pasos.',
+    myOrdersDetail: 'Historial de este cuenta.',
+    contactDetail: 'Pregunta por mesa, horario o la carta.',
+    featureHeading: '¿Por qué Nova Café?',
+    cards: [
+      { title: 'Grano fresco', text: 'Tueste semanal y una extracción cuidada.' },
+      { title: 'Carta completa', text: 'Del espresso clásico al cold brew y al turco.' },
+      { title: 'Pide antes', text: 'Reserva y paga antes de llegar.' },
+      { title: 'Sala quieta', text: 'Mesas, luz suave y sin prisa.' }
+    ],
+    stepsTitle: 'Cómo pedir',
+    steps: [
+      { num: '1', title: 'Ver la carta', text: 'Categorías y tamaños con precio claro.' },
+      { num: '2', title: 'Reservar la taza', text: 'Guardamos la bebida y el tamaño a tu nombre.' },
+      { num: '3', title: 'Pagar', text: 'El total se ve antes de confirmar.' },
+      { num: '4', title: 'Beber', text: 'En el café o para llevar, la taza está lista.' }
+    ],
+    cta: 'Empezar pedido',
+    hot: 'Caliente',
+    cold: 'Frío',
+    specialty: 'Casa',
+    all: 'Todo',
+    sizeS: 'Pequeño',
+    sizeM: 'Mediano',
+    sizeL: 'Grande',
+    toman: 'Tomán',
+    add: 'Añadir al pedido',
+    pay: 'Pagar',
+    back: 'Volver',
+    panel: 'Panel de usuario',
+    language: 'Idioma',
+    theme: 'Tema',
+    logout: 'Salir',
+    username: 'Usuario',
+    password: 'Contraseña',
+    submitLogin: 'Entrar',
+    submitSignup: 'Registrarse',
+    loginLead: 'Entrar a Nova Café',
+    signupLead: 'Crea una cuenta para pedir café',
+    noUser: 'Primero debes registrarte.',
+    wrong: 'Usuario o contraseña incorrectos.',
+    successLogin: 'Sesión iniciada.',
+    successSignup: 'Cuenta creada.',
+    exists: 'Ese usuario ya existe.',
+    emptyCart: 'Aún no hay café.',
+    total: 'Total',
+    confirmPay: 'Confirmar y pagar',
+    paid: 'Pago registrado.',
+    cancel: 'Cancelar',
+    active: 'Activo',
+    cancelled: 'Cancelado',
+    noOrders: 'No hay pedidos.',
+    contactTitle: 'Contactar el café',
+    contactPhone: 'Teléfono',
+    contactAddress: 'Dirección',
+    send: 'Enviar',
+    name: 'Nombre',
+    message: 'Mensaje',
+    sent: 'Mensaje enviado.',
+    termsKicker: 'Términos de uso',
+    termsTitle: 'Términos del café',
+    footerCopy: 'Usar la plataforma implica aceptar los términos.',
+    termsBtn: 'Términos',
+    qty: 'Cant.',
+    pickDrink: 'Elige una bebida',
+    intro: 'Preparando',
+    detailsBtn: 'Detalles',
+    ingredients: 'Ingredientes',
+    specs: 'Ficha',
+    adminPanel: 'Panel admin',
+    adminTitle: 'Editor del sitio',
+    adminLead: 'Cambia precios, textos, dirección, mapa e ingredientes desde aquí.',
+    saveChanges: 'Guardar cambios',
+    savedOk: 'Cambios guardados.',
+    closeDetails: 'Cerrar',
+    seoTitle: 'Nova Café',
+    seoDescription: 'Nova Café: espresso, latte, cold brew y pedidos en línea.',
+    skipToContent: 'Saltar al contenido',
+    hoursTitle: 'Horario',
+    copyright: '2026 Nova Café. Todos los derechos reservados.',
+    faqHeading: 'Preguntas frecuentes',
+    faqs: [
+      { q: '¿Cómo pido?', a: 'Elige una bebida, inicia sesión y paga.' },
+      { q: '¿Hay para llevar?', a: 'Sí, puedes tomarlo aquí o llevarte el vaso.' },
+      { q: '¿A qué hora abren?', a: 'El horario y la dirección aparecen cuando el café los publique.' }
+    ],
+    visitUs: 'Visítanos',
+    siteSettings: 'Ajustes del sitio',
+    pageTitle: 'Título de la página',
+    pageText: 'Texto de presentación',
+    mapLat: 'Latitud',
+    mapLng: 'Longitud',
+    registerMap: 'Guardar en el mapa',
+    mapHeading: 'Mapa',
+    placeEmpty: 'La dirección y el contacto aún no se han publicado.',
+    mapHint: 'Escribe la dirección o las coordenadas y guárdalas en el mapa para que todos las vean.',
+    hideMap: 'Quitar del mapa',
+    mapNeedPlace: 'Añade primero una dirección o latitud y longitud.',
+    adminLogin: 'Entrada de admin',
+    adminLoginLead: 'Acceso de gestión del café',
+    addItem: 'Añadir bebida',
+    itemName: 'Nombre de la bebida',
+    itemCategory: 'Categoría',
+    deleteItem: 'Eliminar opción',
+    itemNeedName: 'Escribe primero el nombre de la bebida.',
+    soldOut: 'Agotado',
+    markUnavailable: 'Marcar no disponible',
+    markAvailable: 'Marcar disponible',
+    restoreItem: 'Restaurar'
+  }
+};
+
+export const THEME_LABELS = {
+  default: { fa: 'سفید', en: 'White', ar: 'أبيض', zh: '白色', es: 'Blanco' },
+  gold: { fa: 'زرد', en: 'Yellow', ar: 'أصفر', zh: '黄色', es: 'Amarillo' }
+};
+</code></pre>
+</section>
+<section class="file">
+<h2>src/data/menu.js</h2>
+<pre><code>import { DRINK_DETAILS } from './menuDetails.js';
+
+const BASE_MENU = [
+  {
+    id: 'espresso',
+    category: 'hot',
+    accent: '#5c3a2e',
+    prices: { s: 85000, m: 95000, l: 110000 },
+    names: { fa: 'اسپرسو', en: 'Espresso', ar: 'إسبريسو', zh: '浓缩咖啡', es: 'Espresso' },
+    blurb: {
+      fa: 'شات غلیظ و کوتاه با کرمای طلایی.',
+      en: 'A short, intense shot with a golden crema.',
+      ar: 'جرعة قصيرة وقوية مع كريمة ذهبية.',
+      zh: '短而浓郁，带金色油脂层。',
+      es: 'Un shot corto e intenso con crema dorada.'
+    }
+  },
+  {
+    id: 'americano',
+    category: 'hot',
+    accent: '#6b4636',
+    prices: { s: 95000, m: 110000, l: 125000 },
+    names: { fa: 'آمریکانو', en: 'Americano', ar: 'أمريكانو', zh: '美式咖啡', es: 'Americano' },
+    blurb: {
+      fa: 'اسپرسو با آب داغ؛ طعم تمیز و متعادل.',
+      en: 'Espresso stretched with hot water; clean and balanced.',
+      ar: 'إسبريسو مع ماء ساخن؛ نكهة نظيفة ومتوازنة.',
+      zh: '浓缩加水，干净均衡。',
+      es: 'Espresso con agua caliente; limpio y equilibrado.'
+    }
+  },
+  {
+    id: 'cappuccino',
+    category: 'hot',
+    accent: '#c4a07a',
+    prices: { s: 120000, m: 135000, l: 150000 },
+    names: { fa: 'کاپوچینو', en: 'Cappuccino', ar: 'كابتشينو', zh: '卡布奇诺', es: 'Capuchino' },
+    blurb: {
+      fa: 'یک‌سوم اسپرسو، شیر و فوم مخملی.',
+      en: 'Equal parts espresso, milk and velvet foam.',
+      ar: 'ثلث إسبريسو وحليب ورغوة مخملية.',
+      zh: '浓缩、牛奶与绵密奶泡各一份。',
+      es: 'Partes iguales de espresso, leche y espuma.'
+    }
+  },
+  {
+    id: 'latte',
+    category: 'hot',
+    accent: '#d7b48a',
+    prices: { s: 125000, m: 145000, l: 165000 },
+    names: { fa: 'لاته', en: 'Latte', ar: 'لاتيه', zh: '拿铁', es: 'Latte' },
+    blurb: {
+      fa: 'شیر نرم روی اسپرسو، مناسب برای هر ساعت.',
+      en: 'Silky milk over espresso, easy any time of day.',
+      ar: 'حليب حريري فوق الإسبريسو في أي وقت.',
+      zh: '丝滑牛奶覆盖浓缩，全天适合。',
+      es: 'Leche sedosa sobre espresso, a cualquier hora.'
+    }
+  },
+  {
+    id: 'flat-white',
+    category: 'hot',
+    accent: '#e2c9a8',
+    prices: { s: 130000, m: 150000, l: 168000 },
+    names: { fa: 'فلت وایت', en: 'Flat White', ar: 'فلات وايت', zh: '澳白', es: 'Flat White' },
+    blurb: {
+      fa: 'میکروفوم نازک و طعم پررنگ‌تر قهوه.',
+      en: 'Thin microfoam with a bolder coffee taste.',
+      ar: 'رغوة دقيقة ونكهة قهوة أوضح.',
+      zh: '薄层绵密奶泡，咖啡味更突出。',
+      es: 'Microespuma fina y un café más presente.'
+    }
+  },
+  {
+    id: 'mocha',
+    category: 'hot',
+    accent: '#4a2c22',
+    prices: { s: 140000, m: 160000, l: 180000 },
+    names: { fa: 'موکا', en: 'Mocha', ar: 'موكا', zh: '摩卡', es: 'Mocha' },
+    blurb: {
+      fa: 'اسپرسو، شکلات و شیر گرم.',
+      en: 'Espresso, chocolate and steamed milk.',
+      ar: 'إسبريسو وشوكولاتة وحليب ساخن.',
+      zh: '浓缩、巧克力与热牛奶。',
+      es: 'Espresso, chocolate y leche caliente.'
+    }
+  },
+  {
+    id: 'macchiato',
+    category: 'hot',
+    accent: '#8a5a3c',
+    prices: { s: 100000, m: 115000, l: 130000 },
+    names: { fa: 'ماکیاتو', en: 'Macchiato', ar: 'ماكياتو', zh: '玛奇朵', es: 'Macchiato' },
+    blurb: {
+      fa: 'اسپرسو با لکه شیر؛ کوتاه و قوی.',
+      en: 'Espresso stained with milk; short and strong.',
+      ar: 'إسبريسو بنقطة حليب؛ قصير وقوي.',
+      zh: '浓缩点奶，短而强。',
+      es: 'Espresso manchado de leche; corto y fuerte.'
+    }
+  },
+  {
+    id: 'cortado',
+    category: 'hot',
+    accent: '#b88962',
+    prices: { s: 115000, m: 130000, l: 145000 },
+    names: { fa: 'کورتادو', en: 'Cortado', ar: 'كورتادو', zh: '可塔朵', es: 'Cortado' },
+    blurb: {
+      fa: 'اسپرسو بریده‌شده با کمی شیر گرم.',
+      en: 'Espresso cut with a little warm milk.',
+      ar: 'إسبريسو مقطوع بقليل من الحليب الدافئ.',
+      zh: '浓缩加少量温奶。',
+      es: 'Espresso cortado con un poco de leche.'
+    }
+  },
+  {
+    id: 'turkish',
+    category: 'specialty',
+    accent: '#3d2418',
+    prices: { s: 110000, m: 125000, l: 140000 },
+    names: { fa: 'قهوه ترک', en: 'Turkish coffee', ar: 'قهوة تركية', zh: '土耳其咖啡', es: 'Café turco' },
+    blurb: {
+      fa: 'جوش آرام در جذوه با کف غلیظ.',
+      en: 'Slow-brewed in a cezve with a thick foam.',
+      ar: 'تحضير بطيء في الجزوة مع رغوة كثيفة.',
+      zh: '在长柄壶中慢煮，泡沫浓厚。',
+      es: 'Cocción lenta en cezve con espuma densa.'
+    }
+  },
+  {
+    id: 'v60',
+    category: 'specialty',
+    accent: '#7a4b32',
+    prices: { s: 145000, m: 165000, l: 185000 },
+    names: { fa: 'فیلتر V60', en: 'V60 filter', ar: 'فلتر V60', zh: 'V60手冲', es: 'Filtro V60' },
+    blurb: {
+      fa: 'دم‌آوری دستی؛ رایحه میوه‌ای و شفاف.',
+      en: 'Pour-over brew; bright and fruit-forward.',
+      ar: 'تحضير يدوي بنكهة فاكهية صافية.',
+      zh: '手冲，明亮果香。',
+      es: 'Preparación por goteo; afrutado y limpio.'
+    }
+  },
+  {
+    id: 'affogato',
+    category: 'specialty',
+    accent: '#f3e6d4',
+    prices: { s: 155000, m: 175000, l: 195000 },
+    names: { fa: 'آفوگاتو', en: 'Affogato', ar: 'أفوجاتو', zh: '阿芙佳朵', es: 'Affogato' },
+    blurb: {
+      fa: 'بستنی وانیل غرق در شات اسپرسو.',
+      en: 'Vanilla ice cream drowned in a hot espresso shot.',
+      ar: 'آيس كريم فانيليا مع شوت إسبريسو ساخن.',
+      zh: '香草冰淇淋淋热浓缩。',
+      es: 'Helado de vainilla ahogado en espresso.'
+    }
+  },
+  {
+    id: 'cold-brew',
+    category: 'cold',
+    accent: '#2c211c',
+    prices: { s: 135000, m: 155000, l: 175000 },
+    names: { fa: 'کلد برو', en: 'Cold brew', ar: 'كولد برو', zh: '冷萃', es: 'Cold brew' },
+    blurb: {
+      fa: 'عصاره سرد ۱۲ ساعته؛ نرم و کم‌اسید.',
+      en: '12-hour cold extract; smooth and low-acid.',
+      ar: 'استخلاص بارد ١٢ ساعة؛ ناعم ومنخفض الحموضة.',
+      zh: '冷萃12小时，顺滑低酸。',
+      es: 'Extracción en frío 12 h; suave y baja acidez.'
+    }
+  },
+  {
+    id: 'iced-latte',
+    category: 'cold',
+    accent: '#c9b39a',
+    prices: { s: 130000, m: 150000, l: 170000 },
+    names: { fa: 'آیس لاته', en: 'Iced latte', ar: 'لاتيه مثلج', zh: '冰拿铁', es: 'Latte helado' },
+    blurb: {
+      fa: 'اسپرسو، شیر سرد و یخ.',
+      en: 'Espresso, cold milk and ice.',
+      ar: 'إسبريسو وحليب بارد وثلج.',
+      zh: '浓缩、冰奶与冰块。',
+      es: 'Espresso, leche fría y hielo.'
+    }
+  },
+  {
+    id: 'frappe',
+    category: 'cold',
+    accent: '#d8c4aa',
+    prices: { s: 145000, m: 165000, l: 185000 },
+    names: { fa: 'فراپه', en: 'Frappé', ar: 'فرابيه', zh: '星冰乐式', es: 'Frappé' },
+    blurb: {
+      fa: 'قهوه یخی هم‌زده با کف سبک.',
+      en: 'Iced coffee blended with a light foam.',
+      ar: 'قهوة مثلجة مخفوقة برغوة خفيفة.',
+      zh: '冰咖啡搅打出轻泡沫。',
+      es: 'Café helado batido con espuma ligera.'
+    }
+  },
+  {
+    id: 'espresso-tonic',
+    category: 'cold',
+    accent: '#c9a227',
+    prices: { s: 150000, m: 170000, l: 190000 },
+    names: { fa: 'اسپرسو تونیک', en: 'Espresso tonic', ar: 'إسبريسو تونيك', zh: '通宁浓缩', es: 'Espresso tonic' },
+    blurb: {
+      fa: 'اسپرسو روی تونیک و یخ؛ تلخ و شاداب.',
+      en: 'Espresso over tonic and ice; bitter and bright.',
+      ar: 'إسبريسو فوق التونيك والثلج؛ مر ومنعش.',
+      zh: '浓缩配汤力水与冰，苦而清爽。',
+      es: 'Espresso sobre tónica e hielo; amargo y fresco.'
+    }
+  },
+  {
+    id: 'caramel-latte',
+    category: 'specialty',
+    accent: '#c9893a',
+    prices: { s: 150000, m: 170000, l: 190000 },
+    names: { fa: 'کارامل لاته', en: 'Caramel latte', ar: 'لاتيه كراميل', zh: '焦糖拿铁', es: 'Latte de caramelo' },
+    blurb: {
+      fa: 'لاته با سس کارامل خانگی.',
+      en: 'Latte finished with house caramel.',
+      ar: 'لاتيه مع صوص كراميل منزلي.',
+      zh: '拿铁配自制焦糖。',
+      es: 'Latte con caramelo de la casa.'
+    }
+  }
+];
+
+export const COFFEE_MENU = BASE_MENU.map((item) =&gt; ({
+  ...item,
+  details: DRINK_DETAILS[item.id] || {
+    specs: { fa: [], en: [], ar: [], zh: [], es: [] },
+    ingredients: { fa: [], en: [], ar: [], zh: [], es: [] }
+  }
+}));
+
+function applyPatch(item, patch) {
+  if (!patch) return item;
+  return {
+    ...item,
+    category: patch.category || item.category,
+    available: typeof patch.available === 'boolean' ? patch.available : item.available !== false,
+    removed: typeof patch.removed === 'boolean' ? patch.removed : Boolean(item.removed),
+    prices: { ...item.prices, ...(patch.prices || {}) },
+    names: { ...item.names, ...(patch.names || {}) },
+    blurb: { ...item.blurb, ...(patch.blurb || {}) },
+    details: {
+      specs: { ...(item.details?.specs || {}), ...(patch.details?.specs || {}) },
+      ingredients: { ...(item.details?.ingredients || {}), ...(patch.details?.ingredients || {}) }
+    }
+  };
+}
+
+export function mergeMenu(base, patches = {}, extras = []) {
+  const extraList = Array.isArray(extras) ? extras : [];
+  return [...base, ...extraList].map((item) =&gt; applyPatch(item, patches[item.id]));
+}
+
+export const SIZE_KEYS = ['s', 'm', 'l'];
+</code></pre>
+</section>
+<section class="file">
+<h2>src/data/menuDetails.js</h2>
+<pre><code>const pack = (fa, en) =&gt; ({ fa, en, ar: en, zh: en, es: en });
+
+export const DRINK_DETAILS = {
+  espresso: {
+    specs: pack(
+      ['حجم شات: ۳۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'رست: متوسط‌تیره', 'خاستگاه: ترکیب اتیوپی و برزیل', 'دما: ۹۲ تا ۹۶ درجه'],
+      ['Shot: 30 ml', 'Caffeine: about 63 mg', 'Roast: medium-dark', 'Origin: Ethiopia &amp; Brazil', 'Temp: 92–96°C']
+    ),
+    ingredients: pack(
+      ['دان اسپرسو تازه آسیاب‌شده', 'آب فیلترشده'],
+      ['Freshly ground espresso beans', 'Filtered water']
+    )
+  },
+  americano: {
+    specs: pack(
+      ['حجم فنجان متوسط: ۲۴۰ میلی‌لیتر', 'کافئین: حدود ۷۷ میلی‌گرم', 'نسبت: یک شات اسپرسو به آب داغ', 'طعم: تمیز، کمی تلخ، اسیدیته ملایم'],
+      ['Medium cup: 240 ml', 'Caffeine: about 77 mg', 'Ratio: one espresso shot to hot water', 'Taste: clean, lightly bitter, mild acidity']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'آب داغ فیلترشده'],
+      ['Espresso shot', 'Hot filtered water']
+    )
+  },
+  cappuccino: {
+    specs: pack(
+      ['حجم فنجان متوسط: ۱۸۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'نسبت: یک‌سوم اسپرسو، شیر و فوم', 'بافت: فوم مخملی و خشک روی سطح'],
+      ['Medium cup: 180 ml', 'Caffeine: about 63 mg', 'Ratio: equal espresso, milk and foam', 'Texture: dry velvet foam on top']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'شیر کامل بخار داده‌شده', 'فوم شیر'],
+      ['Espresso shot', 'Steamed whole milk', 'Milk foam']
+    )
+  },
+  latte: {
+    specs: pack(
+      ['حجم فنجان متوسط: ۲۷۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'نسبت: اسپرسو با لایه ضخیم شیر', 'بافت: نرم و ابریشمی'],
+      ['Medium cup: 270 ml', 'Caffeine: about 63 mg', 'Ratio: espresso under a thick milk layer', 'Texture: silky and soft']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'شیر بخار داده‌شده', 'لایه نازک میکروفوم'],
+      ['Espresso shot', 'Steamed milk', 'Thin microfoam']
+    )
+  },
+  'flat-white': {
+    specs: pack(
+      ['حجم فنجان متوسط: ۱۶۰ میلی‌لیتر', 'کافئین: حدود ۱۳۰ میلی‌گرم (دبل شات)', 'میکروفوم نازک ۲ تا ۳ میلی‌متر', 'طعم قهوه پررنگ‌تر از لاته'],
+      ['Medium cup: 160 ml', 'Caffeine: about 130 mg (double shot)', 'Microfoam 2–3 mm', 'Bolder coffee taste than latte']
+    ),
+    ingredients: pack(
+      ['دبل اسپرسو', 'شیر بخار داده‌شده با میکروفوم نازک'],
+      ['Double espresso', 'Steamed milk with thin microfoam']
+    )
+  },
+  mocha: {
+    specs: pack(
+      ['حجم فنجان متوسط: ۲۷۰ میلی‌لیتر', 'کافئین: حدود ۷۰ میلی‌گرم', 'شیرینی: متوسط از شکلات تلخ', 'سرو: با پودر کاکائو روی فوم'],
+      ['Medium cup: 270 ml', 'Caffeine: about 70 mg', 'Sweetness: medium, from dark chocolate', 'Finish: cocoa on the foam']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'سس شکلات تلخ', 'شیر گرم', 'فوم شیر', 'پودر کاکائو'],
+      ['Espresso shot', 'Dark chocolate sauce', 'Steamed milk', 'Milk foam', 'Cocoa powder']
+    )
+  },
+  macchiato: {
+    specs: pack(
+      ['حجم فنجان: ۶۰ تا ۸۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'نسبت: اسپرسو با لکه شیر', 'طعم: قوی، کوتاه، کمی نرم‌شده'],
+      ['Cup: 60–80 ml', 'Caffeine: about 63 mg', 'Ratio: espresso stained with milk', 'Taste: short, strong, slightly softened']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'یک قاشق فوم شیر'],
+      ['Espresso shot', 'A spoon of milk foam']
+    )
+  },
+  cortado: {
+    specs: pack(
+      ['حجم فنجان: ۱۲۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'نسبت: تقریباً برابر اسپرسو و شیر', 'بافت: کم‌فوم و متعادل'],
+      ['Cup: 120 ml', 'Caffeine: about 63 mg', 'Ratio: roughly equal espresso and milk', 'Texture: little foam, balanced']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'شیر گرم کمی بخار داده‌شده'],
+      ['Espresso shot', 'Lightly steamed warm milk']
+    )
+  },
+  turkish: {
+    specs: pack(
+      ['حجم فنجان: ۶۰ تا ۹۰ میلی‌لیتر', 'کافئین: حدود ۵۰ تا ۶۵ میلی‌گرم', 'آسیاب: بسیار نرم، مثل پودر', 'دم‌آوری: جوش آرام در جذوه مسی'],
+      ['Cup: 60–90 ml', 'Caffeine: about 50–65 mg', 'Grind: extra fine, powder-like', 'Brew: slow simmer in a copper cezve']
+    ),
+    ingredients: pack(
+      ['پودر قهوه ترک', 'آب سرد', 'شکر (به انتخاب)', 'هل (اختیاری)'],
+      ['Turkish coffee powder', 'Cold water', 'Sugar (optional)', 'Cardamom (optional)']
+    )
+  },
+  v60: {
+    specs: pack(
+      ['حجم فنجان متوسط: ۲۵۰ میلی‌لیتر', 'کافئین: حدود ۱۲۰ میلی‌گرم', 'نسبت دم: ۱۵ گرم قهوه به ۲۵۰ گرم آب', 'پروفایل: میوه‌ای، شفاف، اسیدیته روشن'],
+      ['Medium cup: 250 ml', 'Caffeine: about 120 mg', 'Brew ratio: 15 g coffee to 250 g water', 'Profile: fruity, clear, bright acidity']
+    ),
+    ingredients: pack(
+      ['دان فیلتر تازه آسیاب‌شده', 'آب ۹۲ درجه', 'فیلتر کاغذی V60'],
+      ['Freshly ground filter beans', 'Water at 92°C', 'V60 paper filter']
+    )
+  },
+  affogato: {
+    specs: pack(
+      ['سرو: یک اسکوپ بستنی با شات داغ', 'کافئین: حدود ۶۳ میلی‌گرم', 'دما: تضاد داغ و سرد', 'پیشنهاد: بلافاصله بعد از ریختن اسپرسو'],
+      ['Serve: one scoop of ice cream with a hot shot', 'Caffeine: about 63 mg', 'Temp: hot-and-cold contrast', 'Best drunk right after pouring']
+    ),
+    ingredients: pack(
+      ['بستنی وانیل', 'شات اسپرسوی داغ'],
+      ['Vanilla ice cream', 'Hot espresso shot']
+    )
+  },
+  'cold-brew': {
+    specs: pack(
+      ['حجم فنجان متوسط: ۳۰۰ میلی‌لیتر', 'کافئین: حدود ۱۵۰ میلی‌گرم', 'زمان عصاره: ۱۲ ساعت در یخچال', 'طعم: نرم، شکلاتی، کم‌اسید'],
+      ['Medium cup: 300 ml', 'Caffeine: about 150 mg', 'Steep: 12 hours in the fridge', 'Taste: smooth, chocolatey, low-acid']
+    ),
+    ingredients: pack(
+      ['دان درشت آسیاب‌شده', 'آب سرد فیلترشده', 'یخ هنگام سرو'],
+      ['Coarse-ground beans', 'Cold filtered water', 'Ice at service']
+    )
+  },
+  'iced-latte': {
+    specs: pack(
+      ['حجم فنجان متوسط: ۳۲۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'سرو روی یخ', 'شیرینی طبیعی شیر بدون شکر اضافه'],
+      ['Medium cup: 320 ml', 'Caffeine: about 63 mg', 'Served over ice', 'Natural milk sweetness, no extra sugar']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'شیر سرد', 'یخ'],
+      ['Espresso shot', 'Cold milk', 'Ice']
+    )
+  },
+  frappe: {
+    specs: pack(
+      ['حجم فنجان متوسط: ۳۵۰ میلی‌لیتر', 'کافئین: حدود ۸۰ میلی‌گرم', 'بافت: کف سبک و یخی', 'شیرینی: متوسط'],
+      ['Medium cup: 350 ml', 'Caffeine: about 80 mg', 'Texture: light iced foam', 'Sweetness: medium']
+    ),
+    ingredients: pack(
+      ['قهوه فوری یا شات اسپرسو', 'شیر', 'یخ', 'شکر یا سیروپ', 'کمی آب'],
+      ['Instant coffee or espresso', 'Milk', 'Ice', 'Sugar or syrup', 'A splash of water']
+    )
+  },
+  'espresso-tonic': {
+    specs: pack(
+      ['حجم فنجان متوسط: ۳۰۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'طعم: تلخ، مرکباتی و شاداب', 'سرو: اسپرسو روی تونیک و یخ'],
+      ['Medium cup: 300 ml', 'Caffeine: about 63 mg', 'Taste: bitter, citrusy, refreshing', 'Serve: espresso over tonic and ice']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'آب گازدار تونیک', 'یخ', 'برش لیمو یا پرتقال (تزئین)'],
+      ['Espresso shot', 'Tonic water', 'Ice', 'Lemon or orange slice']
+    )
+  },
+  'caramel-latte': {
+    specs: pack(
+      ['حجم فنجان متوسط: ۲۷۰ میلی‌لیتر', 'کافئین: حدود ۶۳ میلی‌گرم', 'شیرینی: کارامل خانگی', 'سرو گرم با درازل کارامل'],
+      ['Medium cup: 270 ml', 'Caffeine: about 63 mg', 'Sweetness: house caramel', 'Served hot with caramel drizzle']
+    ),
+    ingredients: pack(
+      ['شات اسپرسو', 'شیر بخار داده‌شده', 'سس کارامل خانگی', 'درازل کارامل روی فوم'],
+      ['Espresso shot', 'Steamed milk', 'House caramel sauce', 'Caramel drizzle']
+    )
+  }
+};
+</code></pre>
+</section>
+<section class="file">
+<h2>src/data/site.js</h2>
+<pre><code>export const SITE = {
+  name: 'Nova Café',
+  url: 'https://kiarash8081.github.io/app_cafe',
+  image: 'hero-coffee.png'
+};
+</code></pre>
+</section>
+<section class="file">
+<h2>src/data/terms.js</h2>
+<pre><code>export const TERMS = {
+  fa: {
+    dir: 'rtl',
+    kicker: 'قوانین استفاده',
+    title: 'قوانین و مقررات کافه نوا',
+    back: 'بازگشت',
+    sections: [
+      {
+        title: '۱. تعاریف',
+        items: [
+          'کافه / ما: سامانه سفارش نوشیدنی کافه نوا.',
+          'کاربر / شما: کسی که از منو و سفارش آنلاین استفاده می‌کند.',
+          'ثبت‌نام و استفاده به معنای پذیرش این قوانین است.'
+        ]
+      },
+      {
+        title: '۲. نقش سامانه',
+        items: [
+          'سامانه بستر نمایش منو، ثبت سفارش و پرداخت است. آماده‌سازی نوشیدنی در خود کافه انجام می‌شود.'
+        ]
+      },
+      {
+        title: '۳. سفارش و پرداخت',
+        items: [
+          'سفارش پس از پرداخت قطعی می‌شود.',
+          'مبالغ به تومان است و مربوط به سایز انتخاب‌شده است.',
+          'رزرو به معنی یک میز شماره‌دار ثابت نیست؛ وجود ظرفیت در بازه زمانی را تضمین می‌کند مگر خلاف آن اعلام شود.'
+        ]
+      },
+      {
+        title: '۴. مسئولیت',
+        items: [
+          'کاربر مسئول صحت اطلاعات سفارش است.',
+          'حداکثر مسئولیت سامانه در هر سفارش، محدود به مبلغ همان سفارش است.'
+        ]
+      }
+    ]
+  },
+  en: {
+    dir: 'ltr',
+    kicker: 'Terms of use',
+    title: 'Nova Café terms',
+    back: 'Back',
+    sections: [
+      {
+        title: '1. Definitions',
+        items: [
+          'Café / we: the Nova Café ordering platform.',
+          'User / you: anyone using the menu and online orders.',
+          'Signing up and using the service means you accept these terms.'
+        ]
+      },
+      {
+        title: '2. Role of the platform',
+        items: [
+          'The site shows the menu, takes orders and payments. Drinks are prepared in the café.'
+        ]
+      },
+      {
+        title: '3. Orders and payment',
+        items: [
+          'An order is final after payment.',
+          'Prices are in Toman and follow the chosen size.',
+          'A booking does not assign a numbered table unless stated; it guarantees capacity in that time window.'
+        ]
+      },
+      {
+        title: '4. Liability',
+        items: [
+          'The user is responsible for accurate order details.',
+          'Maximum liability for any order is limited to the amount paid for that order.'
+        ]
+      }
+    ]
+  },
+  ar: {
+    dir: 'rtl',
+    kicker: 'شروط الاستخدام',
+    title: 'قوانين نوفا كافيه',
+    back: 'رجوع',
+    sections: [
+      {
+        title: '١. التعاريف',
+        items: [
+          'المقهى / نحن: منصة طلب نوفا كافيه.',
+          'المستخدم / أنت: من يستخدم القائمة والطلب عبر الإنترنت.',
+          'التسجيل والاستخدام يعني قبول هذه القوانين.'
+        ]
+      },
+      {
+        title: '٢. دور المنصة',
+        items: [
+          'تعرض المنصة القائمة وتسجل الطلب والدفع. يُحضَّر المشروب في المقهى.'
+        ]
+      },
+      {
+        title: '٣. الطلب والدفع',
+        items: [
+          'يصبح الطلب نهائياً بعد الدفع.',
+          'الأسعار بالتومان وفق الحجم المختار.',
+          'الحجز لا يعني طاولة مرقمة إلا إذا ذُكر ذلك؛ بل يضمن وجود سعة في ذلك الوقت.'
+        ]
+      },
+      {
+        title: '٤. المسؤولية',
+        items: [
+          'المستخدم مسؤول عن صحة بيانات الطلب.',
+          'أقصى مسؤولية لأي طلب تقتصر على المبلغ المدفوع لذلك الطلب.'
+        ]
+      }
+    ]
+  },
+  zh: {
+    dir: 'ltr',
+    kicker: '使用条款',
+    title: 'Nova 咖啡馆条款',
+    back: '返回',
+    sections: [
+      {
+        title: '1. 定义',
+        items: [
+          '咖啡馆／我们：Nova Café 点单平台。',
+          '用户／您：使用菜单与在线点单的人。',
+          '注册并使用即表示接受本条款。'
+        ]
+      },
+      {
+        title: '2. 平台角色',
+        items: [
+          '本站展示菜单、接收订单与付款。饮品在店内制作。'
+        ]
+      },
+      {
+        title: '3. 订单与付款',
+        items: [
+          '付款后订单生效。',
+          '价格以托曼计，按所选规格。',
+          '预订并不分配固定编号座位，除非另行说明；仅保证该时段有容量。'
+        ]
+      },
+      {
+        title: '4. 责任',
+        items: [
+          '用户须保证订单信息准确。',
+          '任一订单的最高责任限于该笔已付金额。'
+        ]
+      }
+    ]
+  },
+  es: {
+    dir: 'ltr',
+    kicker: 'Términos de uso',
+    title: 'Términos de Nova Café',
+    back: 'Volver',
+    sections: [
+      {
+        title: '1. Definiciones',
+        items: [
+          'Café / nosotros: la plataforma de pedidos de Nova Café.',
+          'Usuario / usted: quien usa la carta y los pedidos en línea.',
+          'Registrarse y usar el servicio implica aceptar estos términos.'
+        ]
+      },
+      {
+        title: '2. Papel de la plataforma',
+        items: [
+          'El sitio muestra la carta, toma pedidos y cobros. Las bebidas se preparan en el café.'
+        ]
+      },
+      {
+        title: '3. Pedidos y pago',
+        items: [
+          'El pedido queda firme tras el pago.',
+          'Los precios están en tomán según el tamaño elegido.',
+          'Una reserva no asigna una mesa numerada salvo que se indique; garantiza capacidad en ese intervalo.'
+        ]
+      },
+      {
+        title: '4. Responsabilidad',
+        items: [
+          'El usuario responde de que los datos del pedido sean correctos.',
+          'La responsabilidad máxima de cada pedido se limita al importe pagado.'
+        ]
+      }
+    ]
+  }
+};
+</code></pre>
+</section>
+<section class="file">
+<h2>src/index.css</h2>
+<pre><code>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  min-height: 100%;
+  overflow-x: clip;
+  font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: clip;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: #2c241c;
+  background: #ddd6cc;
+  display: flex;
+  flex-direction: column;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body.intro-active {
+  overflow: hidden;
+  height: 100dvh;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid #6b4630;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: -80px;
+  z-index: 1000;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #1a1612;
+  color: #f6efe4;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+@media (min-width: 900px) {
+  html { font-size: 17px; }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/main.jsx</h2>
+<pre><code>import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/React.StrictMode&gt;
+);
+</code></pre>
+</section>
+<section class="file">
+<h2>src/styles/App.css</h2>
+<pre><code>:root {
+  --header-h: 72px;
+  --bg-primary: #ddd6cc;
+  --bg-secondary: rgba(232, 223, 210, .92);
+  --surface: rgba(244, 236, 226, .78);
+  --surface-strong: rgba(247, 241, 232, .9);
+  --surface-soft: rgba(255,255,255,.38);
+  --panel-text: #2c241c;
+  --muted-text: #6a5b4c;
+  --accent: #6b4630;
+  --accent-soft: rgba(107, 70, 48, .16);
+  --button-text: #2a1f16;
+  --shadow: rgba(72, 48, 28, .12);
+  --border: rgba(92, 70, 48, .16);
+  --button-bg: rgba(245, 232, 214, .88);
+  --btn-hue: 32deg;
+  --pop-face: #fff6ec;
+  --pop-edge: #b89a7a;
+  --pop-lip: #f3d2b0;
+}
+
+:root[data-theme="gold"] {
+  --bg-primary: #f7f0d9;
+  --bg-secondary: rgba(245, 234, 181, .9);
+  --surface: rgba(255, 245, 209, .8);
+  --surface-strong: rgba(255, 240, 175, .88);
+  --surface-soft: rgba(255,255,255,.38);
+  --panel-text: #352d14;
+  --muted-text: #675c2d;
+  --accent: #d4a40c;
+  --accent-soft: rgba(212, 164, 12, .18);
+  --button-text: #2f2506;
+  --shadow: rgba(138, 104, 14, .12);
+  --border: rgba(108, 92, 32, .14);
+  --button-bg: rgba(245, 224, 140, .7);
+  --btn-hue: 42deg;
+  --pop-face: #fff6d2;
+  --pop-edge: #c9a227;
+  --pop-lip: #f0d889;
+}
+
+@property --rg-pos-x {
+  syntax: "&lt;percentage&gt;";
+  inherits: false;
+  initial-value: 40%;
+}
+
+@property --rg-pos-y {
+  syntax: "&lt;percentage&gt;";
+  inherits: false;
+  initial-value: 140%;
+}
+
+body,
+.site,
+.header,
+.user-panel,
+.home-page,
+.hero-panel,
+.feature-card {
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--panel-text);
+}
+
+.site-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(232, 210, 176, .42), transparent 42%),
+    radial-gradient(circle at 82% 70%, rgba(196, 168, 132, .22), transparent 46%);
+}
+
+.site {
+  opacity: 0;
+}
+
+.site.site-visible {
+  opacity: 1;
+}
+
+.home-page {
+  width: min(1180px, calc(100% - 24px));
+  margin: 0 auto 48px;
+  display: grid;
+  gap: 32px;
+}
+
+.hero-panel,
+.feature-card,
+.overlay-shell {
+  background: var(--surface-strong);
+  color: var(--panel-text);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+.hero-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.85fr);
+  align-items: center;
+  gap: 28px 36px;
+  padding: 40px 36px;
+  border-radius: 28px;
+  text-align: start;
+}
+
+.hero-copy {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+.eyebrow {
+  color: var(--muted-text);
+  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.hero-panel h1,
+.overlay-shell h2,
+.feature-grid h2 {
+  font-family: Lalezar, "Playfair Display", serif;
+  font-size: clamp(2.15rem, 4.6vw, 3.15rem);
+  line-height: 1.25;
+}
+
+.hero-lead,
+.hero-detail,
+.feature-card p {
+  color: var(--muted-text);
+  line-height: 1.8;
+}
+
+.hero-actions,
+.filter-row,
+.size-row,
+.theme-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.hero-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 14px;
+  margin: 0;
+  padding: 6px 4px 18px;
+}
+
+.filter-row {
+  gap: 12px 10px;
+  padding-bottom: 8px;
+}
+
+.action-chip,
+.filter-chip,
+.theme-swatch {
+  border: 1px solid var(--border);
+  background: var(--button-bg);
+  color: var(--button-text);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.action-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 62px;
+  padding: 16px 16px;
+  border-radius: 16px;
+  border: 2px solid var(--pop-edge);
+  background: var(--pop-face);
+  color: var(--button-text);
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow:
+    0 10px 0 -2px var(--pop-lip),
+    0 10px 0 0 var(--pop-edge);
+  transition: transform 0.15s cubic-bezier(0, 0, 0.58, 1), box-shadow 0.15s cubic-bezier(0, 0, 0.58, 1), background 0.15s ease;
+}
+
+.action-chip:hover {
+  transform: translateY(3px);
+  box-shadow:
+    0 7px 0 -2px var(--pop-lip),
+    0 7px 0 0 var(--pop-edge);
+}
+
+.action-chip:active,
+.action-chip.is-on {
+  transform: translateY(8px);
+  box-shadow:
+    0 2px 0 -2px var(--pop-lip),
+    0 2px 0 0 var(--pop-edge);
+}
+
+.filter-chip {
+  border-radius: 12px;
+  border: 2px solid var(--pop-edge);
+  background: var(--pop-face);
+  font-weight: 700;
+  box-shadow:
+    0 6px 0 -2px var(--pop-lip),
+    0 6px 0 0 var(--pop-edge);
+  transition: transform 0.15s cubic-bezier(0, 0, 0.58, 1), box-shadow 0.15s cubic-bezier(0, 0, 0.58, 1);
+}
+
+.filter-chip:hover {
+  transform: translateY(2px);
+  box-shadow:
+    0 4px 0 -2px var(--pop-lip),
+    0 4px 0 0 var(--pop-edge);
+}
+
+.filter-chip.is-on {
+  transform: translateY(5px);
+  background: #1a1612;
+  color: #f6efe4;
+  border-color: #1a1612;
+  box-shadow:
+    0 1px 0 -2px var(--pop-lip),
+    0 1px 0 0 #1a1612;
+}
+
+.primary-btn,
+.glow-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  min-height: 52px;
+  margin: 16px 0 0;
+  padding: 14px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #1a1612;
+  color: #f6efe4;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    inset 0 8px 16px rgba(255, 255, 255, 0.06),
+    0 12px 24px rgba(26, 18, 10, 0.28);
+  transition: transform 0.22s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.primary-btn::before,
+.glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    rgba(255, 255, 255, 0.34) 48%,
+    transparent 68%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.primary-btn::after,
+.glow-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4),
+    hsl(var(--btn-hue) 100% 70% / 0.7),
+    transparent 48%
+  );
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  transition: opacity 0.35s ease;
+}
+
+.primary-btn:hover,
+.glow-btn:hover {
+  border-color: hsl(var(--btn-hue) 100% 80% / 0.5);
+  transform: translateY(-1px) scale(1.01);
+  box-shadow:
+    inset 0 -10px 18px hsl(var(--btn-hue) 100% 70% / 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28),
+    0 14px 28px rgba(26, 18, 10, 0.32);
+}
+
+.primary-btn:hover::before,
+.glow-btn:hover::before {
+  transform: translateX(130%);
+}
+
+.primary-btn:hover::after,
+.glow-btn:hover::after {
+  opacity: 0.55;
+}
+
+.primary-btn:active,
+.glow-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+.glow-btn {
+  --rg-pos-x: 40%;
+  --rg-pos-y: 140%;
+  background:
+    radial-gradient(130% 170% at var(--rg-pos-x) var(--rg-pos-y), #2a140c 18%, #6b3a22 48%, #c48a4a 72%, #1a1612 100%);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    --rg-pos-x 0.7s ease,
+    --rg-pos-y 0.7s ease;
+}
+
+.glow-btn:hover {
+  --rg-pos-x: 8%;
+  --rg-pos-y: 110%;
+}
+
+.faq-block h2,
+.feature-grid h2 { text-align: center; margin-bottom: 16px; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.feature-card {
+  padding: 20px 18px;
+  border-radius: 18px;
+}
+
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(30, 40, 55, .3);
+  backdrop-filter: blur(4px);
+  display: none;
+}
+
+.panel-overlay.open { display: block; }
+
+.user-panel-toggle {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  inset-inline-start: max(10px, env(safe-area-inset-left));
+  z-index: 103;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-strong) 88%, white);
+  color: var(--panel-text);
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px var(--shadow);
+}
+
+.user-panel {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  z-index: 102;
+  width: min(320px, 88vw);
+  height: 100dvh;
+  padding: 72px 20px 24px;
+  background: var(--surface-strong);
+  border-inline-end: 1px solid var(--border);
+  transform: translateX(-110%);
+  transition: transform .28s ease;
+  overflow: auto;
+}
+
+[dir="rtl"] .user-panel { transform: translateX(110%); }
+.user-panel.open,
+[dir="rtl"] .user-panel.open { transform: translateX(0); }
+
+.panel-title { margin-bottom: 16px; }
+.panel-btn {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  text-align: start;
+  cursor: pointer;
+}
+
+.panel-btn.admin-entry {
+  background: #2a1d16;
+  color: #f6efe4;
+}
+
+.user-name-display {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.admin-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #6b4630;
+  color: #f6efe4;
+}
+
+.panel-section { margin: 18px 0; }
+.panel-label { display: block; margin-bottom: 8px; color: var(--muted-text); }
+
+.theme-swatch {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.theme-swatch[data-theme-value="default"] { background: #efe6d8; }
+.theme-swatch[data-theme-value="gold"] { background: #e2c15a; }
+.theme-swatch.active { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.swatch-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 12px auto;
+  border-radius: 50%;
+  background: rgba(255,255,255,.55);
+}
+
+.auth-page,
+.overlay-page {
+  min-height: 100dvh;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  overflow: auto;
+}
+
+.auth-page.active,
+.overlay-page.active { display: flex; }
+
+.auth-page.ring-login-page {
+  align-items: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.overlay-shell {
+  width: min(480px, 100%);
+  margin: 24px auto 40px;
+  padding: 32px 26px;
+  border-radius: 22px;
+}
+
+.overlay-shell.wide { width: min(1080px, 100%); }
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.menu-card {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 18px 16px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: start;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 28px var(--shadow);
+}
+
+.menu-swatch {
+  height: 8px;
+  width: 42px;
+  border-radius: 99px;
+  margin-bottom: 12px;
+  background: var(--bean);
+}
+
+.menu-card p {
+  color: var(--muted-text);
+  min-height: 3.2em;
+  margin: 8px 0 12px;
+  line-height: 1.7;
+  font-size: 1.02rem;
+}
+
+.menu-card-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.menu-card.is-unavailable {
+  opacity: 0.42;
+  filter: grayscale(0.35);
+}
+
+.menu-card.is-unavailable:hover {
+  transform: none;
+}
+
+.sold-out-tag {
+  display: inline-block;
+  margin: 0 0 8px;
+  min-height: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(107, 70, 48, 0.16);
+  color: #6b4630;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.qty-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.qty-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 2px solid var(--pop-edge);
+  background: var(--pop-face);
+  color: var(--button-text);
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    0 6px 0 -2px var(--pop-lip),
+    0 6px 0 0 var(--pop-edge);
+}
+
+.qty-btn:hover:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow:
+    0 4px 0 -2px var(--pop-lip),
+    0 4px 0 0 var(--pop-edge);
+}
+
+.qty-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.qty-value {
+  min-width: 2.2em;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.menu-card .primary-btn { max-width: none; width: 100%; min-width: 0; margin-top: 0; }
+
+.details-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.drink-details {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 8px;
+}
+
+.drink-details h4 {
+  font-size: 0.95rem;
+  color: var(--panel-text);
+}
+
+.drink-details ul {
+  padding-inline-start: 1.15em;
+  color: var(--muted-text);
+  line-height: 1.75;
+  font-size: 0.95rem;
+}
+
+.total-line { font-weight: 800; font-size: 1.1rem; }
+
+.order-list { list-style: none; display: grid; gap: 10px; margin: 16px 0; }
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.terms-section { text-align: start; margin: 18px 0; }
+.terms-section ul { padding-inline-start: 1.2em; line-height: 1.9; color: var(--muted-text); }
+
+.visit-strip,
+.faq-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.visit-strip {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.visit-map {
+  grid-column: 1 / -1;
+}
+
+.visit-card,
+.faq-item {
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px var(--shadow);
+}
+
+.visit-card h3,
+.faq-item h3 {
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.visit-card a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.faq-item h3 {
+  font-size: 1.05rem;
+}
+
+@media (max-width: 720px) {
+  :root { --header-h: 64px; }
+  .header { height: 64px; }
+  .user-panel-toggle { top: max(10px, env(safe-area-inset-top)); }
+  .hero-panel {
+    grid-template-columns: 1fr;
+    padding: 22px 14px 24px;
+    text-align: center;
+    border-radius: 20px;
+  }
+  .hero-copy { justify-items: center; }
+  .hero-actions {
+    width: 100%;
+    gap: 14px 10px;
+  }
+  .action-chip {
+    min-height: 50px;
+    font-size: 0.92rem;
+    box-shadow:
+      0 7px 0 -2px var(--pop-lip),
+      0 7px 0 0 var(--pop-edge);
+  }
+  .action-chip:hover { transform: none; }
+  .action-chip.is-on,
+  .action-chip:active {
+    transform: translateY(5px);
+    box-shadow:
+      0 2px 0 -2px var(--pop-lip),
+      0 2px 0 0 var(--pop-edge);
+  }
+  .primary-btn,
+  .glow-btn {
+    margin-inline: auto;
+    min-width: min(100%, 220px);
+    width: min(100%, 280px);
+  }
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+  .overlay-page,
+  .auth-page {
+    padding: 16px 12px 28px;
+  }
+  .home-page {
+    width: min(1180px, calc(100% - 20px));
+    gap: 22px;
+  }
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/utils/admin.js</h2>
+<pre><code>export const ADMIN = { username: 'kiarash', password: 'k1386k1386' };
+
+export function isAdminLogin(username, password) {
+  return username.trim().toLowerCase() === ADMIN.username &amp;&amp; password === ADMIN.password;
+}
+
+export function isAdminUser(user) {
+  return Boolean(user &amp;&amp; user.role === 'admin' &amp;&amp; user.username === ADMIN.username);
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/utils/asset.js</h2>
+<pre><code>export const BASE = import.meta.env.BASE_URL || '/';
+
+export function asset(path) {
+  return `${BASE}${String(path).replace(/^\//, '')}`;
+}
+
+export function siteUrl() {
+  if (typeof window === 'undefined') return 'https://kiarash8081.github.io/app_cafe/';
+  return `${window.location.origin}${BASE}`;
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/utils/pageOverlay.js</h2>
+<pre><code>export function openOverlayPage(id) {
+  document.getElementById(id)?.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+export function closeOverlayPage(id) {
+  document.getElementById(id)?.classList.remove('active');
+  const site = document.querySelector('.site');
+  if (site) site.style.display = '';
+  document.body.style.overflow = '';
+}
+
+export function switchOverlayPage(fromId, toId) {
+  document.getElementById(fromId)?.classList.remove('active');
+  document.getElementById(toId)?.classList.add('active');
+  const site = document.querySelector('.site');
+  if (site) site.style.display = 'none';
+  document.body.style.overflow = 'hidden';
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>src/utils/siteContent.js</h2>
+<pre><code>export const EMPTY_SITE_CONTENT = {
+  brand: '',
+  title: '',
+  text: '',
+  hours: '',
+  address: '',
+  phone: '',
+  mapLat: '',
+  mapLng: '',
+  mapOn: false
+};
+
+export function filled(value) {
+  return Boolean(value &amp;&amp; String(value).trim());
+}
+
+export function pickSite(site, key, fallback = '') {
+  return filled(site?.[key]) ? String(site[key]).trim() : fallback;
+}
+
+export function mapEmbedSrc(site) {
+  if (!site?.mapOn) return '';
+  const lat = String(site.mapLat || '').trim();
+  const lng = String(site.mapLng || '').trim();
+  if (lat &amp;&amp; lng) {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(`${lat},${lng}`)}&amp;z=16&amp;output=embed`;
+  }
+  const address = String(site.address || '').trim();
+  if (!address) return '';
+  return `https://maps.google.com/maps?q=${encodeURIComponent(address)}&amp;z=16&amp;output=embed`;
+}
+</code></pre>
+</section>
+<section class="file">
+<h2>vite.config.js</h2>
+<pre><code>import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  base: '/app_cafe/',
+  server: {
+    host: true,
+    port: 5174
+  }
+})
+</code></pre>
+</section>
+  </main>
+</body>
+</html>
