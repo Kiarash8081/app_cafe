@@ -1,0 +1,182 @@
+.ring-login-page {
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(196, 138, 74, 0.28), transparent 34%),
+    radial-gradient(circle at 84% 78%, rgba(107, 70, 48, 0.45), transparent 40%),
+    #120e0b;
+}
+
+.login-blob {
+  position: absolute;
+  border-radius: 42% 58% 56% 44% / 46% 42% 58% 54%;
+  filter: blur(28px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.login-blob-a {
+  width: min(280px, 48vw);
+  height: min(280px, 48vw);
+  top: 8%;
+  inset-inline-start: 6%;
+  background: #c48a4a;
+  animation: blobFloat 9s ease-in-out infinite;
+}
+
+.login-blob-b {
+  width: min(220px, 40vw);
+  height: min(220px, 40vw);
+  bottom: 10%;
+  inset-inline-end: 8%;
+  background: #e8c56b;
+  animation: blobFloat 11s ease-in-out infinite reverse;
+}
+
+.login-blob-c {
+  width: min(160px, 32vw);
+  height: min(160px, 32vw);
+  top: 42%;
+  inset-inline-start: 42%;
+  background: #6b4630;
+  animation: blobFloat 8s ease-in-out infinite 1s;
+}
+
+.ring-login {
+  width: min(540px, 94vw);
+  height: min(540px, 94vw);
+  z-index: 1;
+}
+
+.ring-login-form {
+  position: relative;
+  z-index: 1;
+  width: min(300px, 78%);
+  display: grid;
+  gap: 12px;
+  padding: 22px 18px 18px;
+  text-align: center;
+  color: #f6efe4;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.login-cup {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+}
+
+.ring-login-page .brand-cup-disc {
+  fill: rgba(246, 234, 216, 0.18);
+  stroke: #e8c56b;
+}
+
+.ring-login-form h2 {
+  font-family: Lalezar, "Playfair Display", serif;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.ring-lead {
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(246, 239, 228, 0.78);
+}
+
+.ring-field input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.ring-field input:focus {
+  border-color: #e8c56b;
+  box-shadow: 0 0 0 3px rgba(232, 197, 107, 0.22);
+}
+
+.ring-field input::placeholder {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.ring-submit {
+  width: 100%;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 40px;
+  background: linear-gradient(45deg, #6b4630, #e8c56b);
+  color: #1a1612;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ring-submit:hover {
+  filter: brightness(1.06);
+}
+
+.ring-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ring-links button {
+  border: 0;
+  background: transparent;
+  color: #f3d2b0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ring-login-page .form-msg {
+  min-height: 1.2em;
+  margin: 0;
+  color: #f6efe4;
+}
+
+.ring-login-page .form-msg.ok { color: #b7e0c4; }
+.ring-login-page .form-msg.bad { color: #f0b4b4; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(16px, -18px, 0) scale(1.08); }
+}
+
+@media (max-width: 720px) {
+  .ring-login {
+    width: min(430px, 96vw);
+    height: min(430px, 96vw);
+  }
+
+  .ring-login-form {
+    width: min(260px, 78%);
+    padding: 16px 14px;
+    gap: 10px;
+  }
+
+  .ring-login-form h2 { font-size: 1.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-blob { animation: none; }
+}

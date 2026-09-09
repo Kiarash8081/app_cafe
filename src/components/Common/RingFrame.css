@@ -1,0 +1,68 @@
+.ring {
+  position: relative;
+  width: min(500px, 92vw);
+  height: min(500px, 92vw);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring-line {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #fff;
+  pointer-events: none;
+}
+
+.ring-line:nth-child(1) {
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: ringSpin 6s linear infinite;
+}
+
+.ring-line:nth-child(2) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: ringSpin 4s linear infinite;
+}
+
+.ring-line:nth-child(3) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: ringSpinReverse 10s linear infinite;
+}
+
+.ring:hover .ring-line,
+.ring.is-live .ring-line {
+  border: 3px solid var(--clr);
+  filter: drop-shadow(0 0 16px var(--clr));
+}
+
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ringSpinReverse {
+  to { transform: rotate(-360deg); }
+}
+
+.ring-intro-mark {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #f6efe4;
+}
+
+.ring-intro-mark strong {
+  display: block;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  letter-spacing: 0.28em;
+}
+
+.ring-intro-mark small {
+  display: block;
+  margin-top: 6px;
+  letter-spacing: 0.32em;
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-line { animation: none; }
+}

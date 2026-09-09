@@ -1,0 +1,75 @@
+.experience-track {
+  width: 100%;
+  margin: 18px 0 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.experience-slot {
+  height: 92dvh;
+}
+
+.experience-card {
+  --card-lift: calc(var(--header-h, 96px) + 10px + (var(--i, 0) * 12px));
+  position: sticky;
+  top: var(--card-lift);
+  z-index: calc(var(--i, 0) + 2);
+  box-sizing: border-box;
+  height: calc(100dvh - var(--header-h, 96px) - 28px - (var(--i, 0) * 12px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px 32px 28px;
+  text-align: center;
+  background: linear-gradient(180deg, var(--surface-strong), var(--surface));
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 22px 48px var(--shadow);
+}
+
+.experience-card-num {
+  position: absolute;
+  top: 16px;
+  color: var(--muted-text);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  opacity: 0.55;
+}
+
+.stage-drink {
+  margin-top: 12px;
+  width: min(420px, 100%);
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bean) 18%, var(--surface-strong));
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 6px;
+}
+
+.stage-drink strong {
+  font-size: 1.15rem;
+}
+
+@supports (animation-timeline: view()) {
+  .experience-card {
+    animation: cardRecede linear both;
+    animation-timeline: view();
+    animation-range: exit-crossing 0% exit-crossing 100%;
+  }
+  .experience-slot:last-child .experience-card { animation: none; }
+}
+
+@keyframes cardRecede {
+  to { transform: scale(0.92); filter: brightness(0.78); }
+}
+
+@media (max-width: 720px) {
+  .experience-slot { height: 78dvh; }
+  .experience-card {
+    padding: 28px 16px 22px;
+    border-radius: 18px;
+  }
+}

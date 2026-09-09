@@ -1,0 +1,20 @@
+{
+  "name": "Nova Café",
+  "short_name": "نوا",
+  "description": "کافه نوا: اسپرسو، لاته، کلد برو و سفارش آنلاین.",
+  "start_url": "/app_cafe/",
+  "scope": "/app_cafe/",
+  "display": "standalone",
+  "background_color": "#ddd6cc",
+  "theme_color": "#6b4630",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
